@@ -3,9 +3,9 @@ local ui = require("refactor.ui")
 
 local M = {}
 
-M.start_backend = backend.start_backend()
-M.send_request = backend.send_request()
-M.menu = ui.show_menu()
+M.start_backend = backend.start_backend
+M.send_request = backend.send_request
+M.menu = ui.show_menu
 
 backend.start_backend()
 
