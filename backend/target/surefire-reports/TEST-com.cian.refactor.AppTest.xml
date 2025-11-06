@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/home/cian/.local/share/mise/installs/java/25.0.1/lib"/>
-    <property name="sun.java.command" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter16155890013062406867.jar /home/cian/Work/java-refactor-tool/backend/target/surefire 2025-11-05T22-59-29_329-jvmRun1 surefire8060286973496120961tmp surefire_014152344888645263426tmp"/>
+    <property name="sun.java.command" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter6238692609160892573.jar /home/cian/Work/java-refactor-tool/backend/target/surefire 2025-11-06T17-41-04_897-jvmRun1 surefire7017480697520776748tmp surefire_03761451359899915471tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/test-classes:/home/cian/Work/java-refactor-tool/backend/target/classes:/home/cian/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/cian/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/cian/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/home/cian/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter16155890013062406867.jar"/>
+    <property name="surefire.real.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter6238692609160892573.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="25.0.1+8-27"/>
     <property name="user.name" value="cian"/>
