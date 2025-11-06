@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.cian.refactor.AppTest" time="0.017" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.cian.refactor.AppTest" time="0.021" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/home/cian/.local/share/mise/installs/java/25.0.1/lib"/>
-    <property name="sun.java.command" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter6238692609160892573.jar /home/cian/Work/java-refactor-tool/backend/target/surefire 2025-11-06T17-41-04_897-jvmRun1 surefire7017480697520776748tmp surefire_03761451359899915471tmp"/>
+    <property name="sun.java.command" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter4499558885656060933.jar /home/cian/Work/java-refactor-tool/backend/target/surefire 2025-11-06T18-22-32_799-jvmRun1 surefire1939452275549405688tmp surefire_08325779901383698819tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/test-classes:/home/cian/Work/java-refactor-tool/backend/target/classes:/home/cian/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/cian/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/cian/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/home/cian/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter6238692609160892573.jar"/>
+    <property name="surefire.real.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter4499558885656060933.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="25.0.1+8-27"/>
     <property name="user.name" value="cian"/>
@@ -54,5 +54,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="com.cian.refactor.AppTest" time="0.002"/>
+  <testcase name="shouldAnswerWithTrue" classname="com.cian.refactor.AppTest" time="0.003"/>
 </testsuite>
