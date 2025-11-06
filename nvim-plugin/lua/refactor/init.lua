@@ -15,3 +15,4 @@ end, {})
 
 vim.notify("java-refactor plugin loaded!", vim.log.levels.INFO)
 
+return M
