@@ -50,9 +50,6 @@ function M.show_menu()
 
   menu:mount()
 
-  menu:on(event.BufLeave, function()
-    menu:unmount()
-  end)
 end
 
 return M

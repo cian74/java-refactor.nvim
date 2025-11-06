@@ -8,5 +8,6 @@ public class Runner {
 		String source = "public class Tester { String word; }";
 
 		re.applyRefactor("", source);
+
 	}
 }
