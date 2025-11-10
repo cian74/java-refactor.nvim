@@ -2,5 +2,5 @@ package com.cian.refactor;
 
 public class Refactored{
 	String originalSource;
-	String refactorSource;
+	String new_source;
 }
