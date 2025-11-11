@@ -3,16 +3,16 @@ local ui = require("refactor.ui")
 
 local M = {}
 
-M.start_backend = backend.start_backend
-M.send_request = backend.send_request
-M.menu = ui.show_menu
+function M.start_backend()
+  backend.start_backend()
+end
 
-backend.start_backend()
-
-vim.api.nvim_create_user_command("RefactorMenu", function()
+function M.menu()
   ui.show_menu()
-end, {})
+end
 
 vim.notify("java-refactor plugin loaded!", vim.log.levels.INFO)
+vim.api.nvim_create_user_command("RefactorStart", M.start_backend, {})
+vim.api.nvim_create_user_command("RefactorMenu", M.menu, {})
 
 return M
