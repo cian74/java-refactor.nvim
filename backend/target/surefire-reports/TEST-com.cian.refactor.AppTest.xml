@@ -1,58 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.cian.refactor.AppTest" time="0.019" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.cian.refactor.AppTest" time="0.011" tests="1" errors="0" skipped="0" failures="0">
   <properties>
-    <property name="java.specification.version" value="25"/>
+    <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/test-classes:/home/cian/Work/java-refactor-tool/backend/target/classes:/home/cian/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/cian/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/cian/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/home/cian/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:/home/cian/.m2/repository/com/github/javaparser/javaparser-core/3.25.5/javaparser-core-3.25.5.jar:"/>
-    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.class.path" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/test-classes:/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/classes:/Users/cianbarrett/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/cianbarrett/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/cianbarrett/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/Users/cianbarrett/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:/Users/cianbarrett/.m2/repository/com/github/javaparser/javaparser-core/3.25.5/javaparser-core-3.25.5.jar:"/>
+    <property name="java.vm.vendor" value="Homebrew"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="java.vendor.url" value="https://java.oracle.com/"/>
-    <property name="os.name" value="Linux"/>
-    <property name="java.vm.specification.version" value="25"/>
+    <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="21"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="user.country" value="US"/>
-    <property name="sun.boot.library.path" value="/home/cian/.local/share/mise/installs/java/25.0.1/lib"/>
-    <property name="sun.java.command" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter7008974186535223898.jar /home/cian/Work/java-refactor-tool/backend/target/surefire 2025-11-10T19-59-53_107-jvmRun1 surefire12035705480595042432tmp surefire_013361232299172833201tmp"/>
+    <property name="user.country" value="IE"/>
+    <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk@21/21.0.9/libexec/openjdk.jdk/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire/surefirebooter7824219119335488271.jar /Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire 2025-11-11T14-14-33_312-jvmRun1 surefire9631238038790005630tmp surefire_010646384024488314207tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/test-classes:/home/cian/Work/java-refactor-tool/backend/target/classes:/home/cian/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/cian/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/cian/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/home/cian/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:/home/cian/.m2/repository/com/github/javaparser/javaparser-core/3.25.5/javaparser-core-3.25.5.jar:"/>
+    <property name="surefire.test.class.path" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/test-classes:/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/classes:/Users/cianbarrett/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/cianbarrett/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/cianbarrett/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/Users/cianbarrett/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:/Users/cianbarrett/.m2/repository/com/github/javaparser/javaparser-core/3.25.5/javaparser-core-3.25.5.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
-    <property name="user.home" value="/home/cian"/>
+    <property name="user.home" value="/Users/cianbarrett"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="java.version.date" value="2025-10-21"/>
-    <property name="java.home" value="/home/cian/.local/share/mise/installs/java/25.0.1"/>
+    <property name="java.home" value="/opt/homebrew/Cellar/openjdk@21/21.0.9/libexec/openjdk.jdk/Contents/Home"/>
     <property name="file.separator" value="/"/>
-    <property name="basedir" value="/home/cian/Work/java-refactor-tool/backend"/>
+    <property name="basedir" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="line.separator" value="&#10;"/>
-    <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/cian/Work/java-refactor-tool/backend/target/surefire/surefirebooter7008974186535223898.jar"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire/surefirebooter7824219119335488271.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="java.runtime.version" value="25.0.1+8-27"/>
-    <property name="user.name" value="cian"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="21.0.9"/>
+    <property name="user.name" value="cianbarrett"/>
     <property name="stdout.encoding" value="UTF-8"/>
     <property name="path.separator" value=":"/>
-    <property name="os.version" value="6.17.5-arch1-1"/>
+    <property name="os.version" value="15.6.1"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
-    <property name="localRepository" value="/home/cian/.m2/repository"/>
-    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
-    <property name="java.io.tmpdir" value="/tmp"/>
-    <property name="java.version" value="25.0.1"/>
-    <property name="user.dir" value="/home/cian/Work/java-refactor-tool/backend"/>
-    <property name="os.arch" value="amd64"/>
+    <property name="java.vendor.version" value="Homebrew"/>
+    <property name="localRepository" value="/Users/cianbarrett/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="java.io.tmpdir" value="/var/folders/wk/rgpqg7hj04l5tc10hkfq6y4w0000gn/T/"/>
+    <property name="java.version" value="21.0.9"/>
+    <property name="user.dir" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend"/>
+    <property name="os.arch" value="aarch64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="native.encoding" value="UTF-8"/>
-    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="java.library.path" value="/Users/cianbarrett/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
     <property name="stderr.encoding" value="UTF-8"/>
-    <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="java.vm.version" value="25.0.1+8-27"/>
-    <property name="stdin.encoding" value="UTF-8"/>
-    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
-    <property name="java.class.version" value="69.0"/>
+    <property name="java.vendor" value="Homebrew"/>
+    <property name="java.vm.version" value="21.0.9"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="com.cian.refactor.AppTest" time="0.004"/>
+  <testcase name="shouldAnswerWithTrue" classname="com.cian.refactor.AppTest" time="0.002"/>
 </testsuite>

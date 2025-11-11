@@ -2,5 +2,5 @@ com/cian/refactor/Test.class
 com/cian/refactor/Response.class
 com/cian/refactor/Request.class
 com/cian/refactor/RefactoringEngine.class
-com/cian/refactor/Refactored.class
 com/cian/refactor/Runner.class
+com/cian/refactor/Refactored.class
