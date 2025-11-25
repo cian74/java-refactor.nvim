@@ -39,7 +39,7 @@ function M.start_backend()
 
                     if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
                         vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
-                        vim.notify("Refactoring applied", vim.log.levels.INFO)
+                        --vim.notify("Refactoring applied", vim.log.levels.INFO)
                     end
                 end
             end)
@@ -61,7 +61,7 @@ function M.start_backend()
     M.job:start()
 
     -- Don't wait, assume it started
-    vim.notify("Backend started", vim.log.levels.INFO)
+    --vim.notify("Backend started", vim.log.levels.INFO)
     return true
 end
 

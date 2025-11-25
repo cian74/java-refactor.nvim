@@ -33,12 +33,14 @@ public class RefactoringEngine {
 				if(field.isPrivate()){
 					String name = field.getVariable(0).getNameAsString();
 					String type = field.getVariable(0).getTypeAsString();
+
+					String capitalisedName = capitalise(name);
 					
-					MethodDeclaration getter = bufferClass.addMethod("get" + name, Modifier.Keyword.PUBLIC);
+					MethodDeclaration getter = bufferClass.addMethod("get" + capitalisedName, Modifier.Keyword.PUBLIC);
 					getter.setType(type);
 					getter.createBody().addStatement("return " + name + ";");
 
-					MethodDeclaration setter = bufferClass.addMethod("set" + name, Modifier.Keyword.PUBLIC);
+					MethodDeclaration setter = bufferClass.addMethod("set" + capitalisedName, Modifier.Keyword.PUBLIC);
 					setter.addParameter(type, name);
 					setter.createBody().addStatement("this." + name + " = " + name + ";");
 
@@ -54,5 +56,10 @@ public class RefactoringEngine {
 		return result;
 	}
 
+	//capitalise method for correct method declaration
+	public String capitalise(String methodName){
+		if(methodName == null || methodName.isEmpty()) return methodName;
+		return methodName.substring(0,1).toUpperCase() + methodName.substring(1);
+	}
 
 }

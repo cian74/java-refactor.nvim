@@ -6,19 +6,19 @@ public class Test {
 
     private int age;
 
-    public String getname() {
+    public String getName() {
         return name;
     }
 
-    public void setname(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public int getage() {
+    public int getAge() {
         return age;
     }
 
-    public void setage(int age) {
+    public void setAge(int age) {
         this.age = age;
     }
 }
