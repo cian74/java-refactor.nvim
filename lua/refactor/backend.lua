@@ -4,150 +4,100 @@ local M = {}
 local cwd = vim.fn.getcwd()
 local jar_path = cwd .. "/backend/target/java-refactor-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
--- Buffer for streaming JSON (backend may output in chunks)
 M.json_buffer = ""
 
-function M.start_backend()
-<<<<<<< HEAD
-	M.job = Job:new({
-		command = "java",
-		args = {"-jar", jar_path },
-
-		on_stdout = function(_, data)
-			if data and data ~= "" then
-				vim.schedule(function()
-					local ok, json_msg = pcall(vim.fn.json_decode,data)
-					if ok and json_msg.new_source then
-						local lines = {}
-						for line in json_msg.new_source:gmatch("[^\r\n]+") do
-							table.insert(lines, line)
-						end
-						vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
-					else
-						print("[Java Backend]", data)
-					end
-				end)
-			end
-		end,
-
-		on_stderr = function(_, err)
-			if err and err ~= "" then
-				vim.schedule(function()
-					vim.notify("Backend error: " .. err, vim.log.levels.ERROR)
-				end)
-			end
-		end,
-	})
-
-	M.job:start()
+function M.is_backend_running()
+    return M.job ~= nil and M.job.is_shutdown == false
 end
 
-function M.send_request(command, source)
-	if not M.job then
-		M.start_backend()
-	end
-
-	local request = {
-		command = command,
-		source = source
-	}
-
-	local json = vim.json.encode(request) .. "\n"
-	M.job:send(json)
-=======
-    if M.job then
-        print("Backend already running")
-        return
+function M.start_backend()
+    if M.is_backend_running() then
+        return true
     end
 
-    print("Starting backend at: " .. jar_path)
+    if vim.fn.filereadable(jar_path) == 0 then
+        vim.notify("Backend JAR not found", vim.log.levels.ERROR)
+        return false
+    end
 
     M.job = Job:new({
         command = "java",
         args = { "-jar", jar_path },
-
         on_stdout = function(_, data)
             if not data or data == "" then return end
 
-            print("[STDOUT RAW]:", vim.inspect(data))
+            vim.schedule(function()
+                M.json_buffer = M.json_buffer .. data
 
-            -- Append streamed output
-            M.json_buffer = M.json_buffer .. data
+                local ok, json_msg = pcall(vim.json.decode, M.json_buffer)
+                if not ok then return end
 
-            -- Try decode the buffer
-            local ok, json_msg = pcall(vim.json.decode, M.json_buffer)
+                M.json_buffer = ""
 
-            if not ok then
-                print("[JSON not complete yet]")
-                return
-            end
+                if json_msg.new_source then
+                    local lines = vim.split(json_msg.new_source, "\n")
 
-            -- JSON parse succeeded
-            print("[JSON DECODE SUCCESS]:", vim.inspect(json_msg))
-
-            -- Clear buffer after successful parse
-            M.json_buffer = ""
-
-            if json_msg.new_source then
-                print("new_source received, applying to buffer")
-
-                local lines = {}
-                for line in json_msg.new_source:gmatch("[^\r\n]+") do
-                    table.insert(lines, line)
+                    if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
+                        vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
+                        vim.notify("Refactoring applied", vim.log.levels.INFO)
+                    end
                 end
-
-                local bufnr = vim.api.nvim_get_current_buf()
-                print("Applying to buffer number:", bufnr)
-
-                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-            else
-                print("[new_source missing in JSON message]")
-            end
+            end)
         end,
-
         on_stderr = function(_, err)
             if err and err ~= "" then
-                print("[STDERR]:", err)
+                vim.schedule(function()
+                    print("[Backend]: " .. err)
+                end)
             end
         end,
-
         on_exit = function(_, code)
-            print("Backend exited with code:", code)
-            M.job = nil
+            vim.schedule(function()
+                M.job = nil
+            end)
         end,
     })
 
     M.job:start()
-    print("Backend started")
+
+    -- Don't wait, assume it started
+    vim.notify("Backend started", vim.log.levels.INFO)
+    return true
 end
 
 function M.send_request(request)
-    if not M.job then
-        print("Backend not running, starting...")
-        M.start_backend()
+    if not M.is_backend_running() then
+        local success = M.start_backend()
+        if not success then
+            vim.notify("Cannot send request", vim.log.levels.ERROR)  -- Fixed typo
+            return
+        end
+        vim.wait(1000)  -- Wait after starting
     end
 
-    print("========== SENDING REQUEST ==========")
-    print("Command:", request.command)
-    print("Source:", request.source)
-    print("=====================================")
+    M.target_buffer = vim.api.nvim_get_current_buf()
 
-    local json = vim.json.encode(request) .. "\n"
-    print("JSON sent to backend:", json)
+    local ok, json = pcall(vim.json.encode, request)
+    if not ok then
+        vim.notify("Failed to encode request", vim.log.levels.ERROR)
+        return
+    end
 
-    M.job:send(json)
-    print("Request dispatched")
+    local send_ok = pcall(function()
+        M.job:send(json .. "\n")
+    end)
+
+    if not send_ok then
+        vim.notify("Failed to send request", vim.log.levels.ERROR)
+        M.job = nil
+    end
 end
 
 function M.stop_backend()
     if M.job then
-        print("Stopping backend...")
         M.job:shutdown()
         M.job = nil
-        print("Backend stopped")
     end
->>>>>>> 25418c6 (writing to buffer and logging messages)
 end
 
 return M
-
