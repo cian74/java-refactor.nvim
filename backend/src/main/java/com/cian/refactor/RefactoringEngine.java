@@ -37,6 +37,11 @@ public class RefactoringEngine {
 					MethodDeclaration getter = bufferClass.addMethod("get" + name, Modifier.Keyword.PUBLIC);
 					getter.setType(type);
 					getter.createBody().addStatement("return " + name + ";");
+
+					MethodDeclaration setter = bufferClass.addMethod("set" + name, Modifier.Keyword.PUBLIC);
+					setter.addParameter(type, name);
+					setter.createBody().addStatement("this." + name + " = " + name + ";");
+
 				}
 
 			}
