@@ -17,8 +17,21 @@ public class RefactoringEngine {
 			case("generate_getters_setters"):
 				result = generateGettersSetters(source);
 				break;
+			case("extract_method"):
+				result = extractMethod(source);
 		}
 		return gson.toJson(result);
+	}
+
+	private Refactored extractMethod(String source) throws RuntimeException {
+		Refactored result = new Refactored(); 
+		try {
+			
+		} catch (Exception e) {
+			System.err.println(e.getStackTrace());
+		}
+
+		return result;
 	}
 
 	private Refactored generateGettersSetters(String source) throws RuntimeException {
