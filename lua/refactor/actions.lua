@@ -33,6 +33,9 @@ function M.extract_method()
 		highlighted = table.concat(lines, "\n")
 	end
 
+	--print("Highlighted text: '" .. highlighted .. "'")
+	--print("==================")
+
 	local current_lines = vim.api.nvim_buf_get_lines(buf,0,-1,false)
 	local current_source = table.concat(current_lines, "\n")
 

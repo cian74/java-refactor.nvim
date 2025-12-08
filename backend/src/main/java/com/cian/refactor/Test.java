@@ -6,10 +6,11 @@ public class Test {
 
     private int age;
 
-	int x = 0;
-	int y = 1;
+    int x = 0;
 
-	int z = x + y * (x + y);
+    int y = 1;
+
+    int z = x + y * (x + y);
 
     public String getName() {
         return name;

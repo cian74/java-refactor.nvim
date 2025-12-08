@@ -11,27 +11,61 @@ import com.google.gson.Gson;
 public class RefactoringEngine {
 	private static final Gson gson = new Gson();
 	Refactored result = new Refactored();
+	Request request = new Request();
 
-	public String applyRefactor(String command, String source){
+	public String applyRefactor(String command, Request request){
 		switch (command) {
 			case("generate_getters_setters"):
-				result = generateGettersSetters(source);
+				result = generateGettersSetters(request.source);
 				break;
 			case("extract_method"):
-				result = extractMethod(source);
+				result = extractMethod(request);
+				break;
 		}
 		return gson.toJson(result);
 	}
 
-	private Refactored extractMethod(String source) throws RuntimeException {
+	private Refactored extractMethod(Request request) throws RuntimeException {
+		//System.out.println(request.source);
 		Refactored result = new Refactored(); 
 		try {
-			
+			CompilationUnit cu = StaticJavaParser.parse(request.source);	
+
+			ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+
+			MethodDeclaration highlightedMethod= findHighlightedMethod(bufferClass, request.start_line, request.end_line);
+
+			if(highlightedMethod == null){
+				return result;
+			}
+
+
+			System.err.println(highlightedMethod.getNameAsString());
+
+			result.new_source = cu.toString();
+
+
 		} catch (Exception e) {
-			System.err.println(e.getStackTrace());
+			e.printStackTrace(System.err);
 		}
 
 		return result;
+	}
+
+	private MethodDeclaration findHighlightedMethod(ClassOrInterfaceDeclaration cls, int startLine, int endLine){
+		for(MethodDeclaration method : cls.getMethods()){
+			if(method.getBegin().isPresent() && method.getEnd().isPresent()){
+				int methodStart = method.getBegin().get().line;
+				int methodEnd = method.getEnd().get().line;
+
+				System.err.println("Checking Method: " + method.getNameAsString() + " start: " + methodStart + " end: " + methodEnd);
+
+				if (startLine >= methodStart && endLine <= methodEnd) {
+					return method;
+				}
+			}
+		}
+		return null;
 	}
 
 	private Refactored generateGettersSetters(String source) throws RuntimeException {
@@ -48,7 +82,7 @@ public class RefactoringEngine {
 					String type = field.getVariable(0).getTypeAsString();
 
 					String capitalisedName = capitalise(name);
-					
+
 					MethodDeclaration getter = bufferClass.addMethod("get" + capitalisedName, Modifier.Keyword.PUBLIC);
 					getter.setType(type);
 					getter.createBody().addStatement("return " + name + ";");

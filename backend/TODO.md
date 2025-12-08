@@ -1,22 +1,9 @@
 TODO:
 
-generate getters setters method:
+-implement actual refactor logic
 
-only generate if it doesnt exist
+implement refactor logic.
 
-extract method:
+capture statements sent.
 
-    turn this:
-
-    int x = m + n - 1 + (m * n);
-
-    to this:
-
-	private int add() {
-		return m + n - 1 + (m * n);
-	}
-
--need to send code highlighted by cursor
--wrap with a private function
--give user option to name it
-
+build method around highlighted method.

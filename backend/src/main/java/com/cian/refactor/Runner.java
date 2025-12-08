@@ -15,8 +15,6 @@ public class Runner {
 		RefactoringEngine engine = new RefactoringEngine();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-		String source = "public class Foo {	String bar; String foo; }";
-
 		while(true){
 			try {
 				String line = reader.readLine();
@@ -25,7 +23,7 @@ public class Runner {
 
 				Request request = gson.fromJson(line, Request.class);
 
-				String response = engine.applyRefactor(request.command, request.source);
+				String response = engine.applyRefactor(request.command, request);
 
 				String escaped = response.replace("\n", "\\n").replace("\r", "\\r");
 
