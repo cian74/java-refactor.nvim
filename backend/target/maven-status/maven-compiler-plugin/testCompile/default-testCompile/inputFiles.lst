@@ -1,1 +1,3 @@
-/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/AppTest.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/RefactoringEngineCapitaliseTest.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/GenerateGettersSettersTest.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/RunnerIOTest.java

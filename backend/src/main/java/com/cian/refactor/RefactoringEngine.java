@@ -39,6 +39,8 @@ public class RefactoringEngine {
 				return result;
 			}
 
+			var statements = highlightedMethod.getBody().get().getStatements();
+			
 
 			System.err.println(highlightedMethod.getNameAsString());
 
