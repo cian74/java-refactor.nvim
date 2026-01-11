@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="IE"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk@21/21.0.9/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire/surefirebooter4607999758289035559.jar /Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire 2025-12-08T14-39-42_203-jvmRun1 surefire371538667657289095tmp surefire_010181613584409941266tmp"/>
+    <property name="sun.java.command" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire/surefirebooter2737968748231012544.jar /Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire 2026-01-11T14-53-41_875-jvmRun1 surefire1321262333977514607tmp surefire_05728697968244692016tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/test-classes:/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/classes:/Users/cianbarrett/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.0/junit-jupiter-5.10.0.jar:/Users/cianbarrett/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.0/junit-jupiter-api-5.10.0.jar:/Users/cianbarrett/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/cianbarrett/.m2/repository/org/junit/platform/junit-platform-commons/1.10.0/junit-platform-commons-1.10.0.jar:/Users/cianbarrett/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/cianbarrett/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.0/junit-jupiter-params-5.10.0.jar:/Users/cianbarrett/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.0/junit-jupiter-engine-5.10.0.jar:/Users/cianbarrett/.m2/repository/org/junit/platform/junit-platform-engine/1.10.0/junit-platform-engine-1.10.0.jar:/Users/cianbarrett/.m2/repository/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar:/Users/cianbarrett/.m2/repository/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar:/Users/cianbarrett/.m2/repository/com/github/javaparser/javaparser-core/3.25.5/javaparser-core-3.25.5.jar:"/>
@@ -29,14 +29,14 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire/surefirebooter4607999758289035559.jar"/>
+    <property name="surefire.real.class.path" value="/Users/cianbarrett/Projects/java-refactor.nvim/backend/target/surefire/surefirebooter2737968748231012544.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="21.0.9"/>
     <property name="user.name" value="cianbarrett"/>
     <property name="stdout.encoding" value="UTF-8"/>
     <property name="path.separator" value=":"/>
-    <property name="os.version" value="15.6.1"/>
+    <property name="os.version" value="15.7.3"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
