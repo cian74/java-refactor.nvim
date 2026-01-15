@@ -10,7 +10,11 @@ public class Test {
 
     int y = 1;
 
-    int z = x + y * (x + y);
+    public void calculate() {
+        int x = 0;
+        int y = 1;
+        int z = x + y * (x + y);
+    }
 
     public String getName() {
         return name;

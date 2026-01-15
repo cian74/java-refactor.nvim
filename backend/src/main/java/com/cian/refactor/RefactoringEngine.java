@@ -26,33 +26,73 @@ public class RefactoringEngine {
 	}
 
 	private Refactored extractMethod(Request request) throws RuntimeException {
-		//System.out.println(request.source);
-		Refactored result = new Refactored(); 
-		try {
-			CompilationUnit cu = StaticJavaParser.parse(request.source);	
-
-			ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
-
-			MethodDeclaration highlightedMethod= findHighlightedMethod(bufferClass, request.start_line, request.end_line);
-
-			if(highlightedMethod == null){
-				return result;
-			}
-
-			var statements = highlightedMethod.getBody().get().getStatements();
-			
-
-			System.err.println(highlightedMethod.getNameAsString());
-
-			result.new_source = cu.toString();
-
-
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-		}
-
-		return result;
-	}
+    Refactored result = new Refactored(); 
+    try {
+        CompilationUnit cu = StaticJavaParser.parse(request.source);	
+        ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+        MethodDeclaration containingMethod = findHighlightedMethod(bufferClass, request.start_line, request.end_line);
+        
+        if(containingMethod == null){
+            result.error = "Extract Method only works on code inside methods, not on field declarations";
+            return result;
+        }
+        
+        System.err.println("Found method: " + containingMethod.getNameAsString());
+        System.err.println("Highlighted text: '" + request.highlighted + "'");
+        
+        // Determine if this is an expression or statement(s)
+        boolean isExpression = !request.highlighted.trim().endsWith(";");
+        
+        if (isExpression) {
+            // Extract expression - create method that returns the expression
+            MethodDeclaration newMethod = bufferClass.addMethod(request.method_name, Modifier.Keyword.PRIVATE);
+            
+            // Try to infer return type (defaulting to int for now)
+            newMethod.setType("int");
+            // Use parseExpression for expressions, then wrap in return statement
+            newMethod.getBody().get().addStatement("return " + request.highlighted.trim() + ";");
+            
+            // Replace expression in original method with method call
+            String originalBody = containingMethod.getBody().get().toString();
+            String modifiedBody = originalBody.replace(request.highlighted, request.method_name + "()");
+            
+            // Re-parse the body
+            containingMethod.getBody().get().getStatements().clear();
+            CompilationUnit tempCu = StaticJavaParser.parse("class Temp { void temp() " + modifiedBody + " }");
+            MethodDeclaration tempMethod = tempCu.findFirst(MethodDeclaration.class).get();
+            
+            for(var stmt : tempMethod.getBody().get().getStatements()) {
+                containingMethod.getBody().get().addStatement(stmt);
+            }
+        } else {
+            // Extract statement(s) - code ending with semicolon
+            MethodDeclaration newMethod = bufferClass.addMethod(request.method_name, Modifier.Keyword.PRIVATE);
+            newMethod.setType("void");
+            
+            // Parse as a statement
+            var statement = StaticJavaParser.parseStatement(request.highlighted.trim());
+            newMethod.getBody().get().addStatement(statement);
+            
+            // Replace in original
+            String originalBody = containingMethod.getBody().get().toString();
+            String modifiedBody = originalBody.replace(request.highlighted, request.method_name + "();");
+            
+            containingMethod.getBody().get().getStatements().clear();
+            CompilationUnit tempCu = StaticJavaParser.parse("class Temp { void temp() " + modifiedBody + " }");
+            MethodDeclaration tempMethod = tempCu.findFirst(MethodDeclaration.class).get();
+            
+            for(var stmt : tempMethod.getBody().get().getStatements()) {
+                containingMethod.getBody().get().addStatement(stmt);
+            }
+        }
+        
+        result.new_source = cu.toString();
+    } catch (Exception e) {
+        e.printStackTrace(System.err);
+        result.error = "Extraction failed: " + e.getMessage();
+    }
+    return result;
+}
 
 	private MethodDeclaration findHighlightedMethod(ClassOrInterfaceDeclaration cls, int startLine, int endLine){
 		for(MethodDeclaration method : cls.getMethods()){
