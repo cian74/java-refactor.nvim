@@ -40,11 +40,9 @@ public class RefactoringEngine {
         System.err.println("Found method: " + containingMethod.getNameAsString());
         System.err.println("Highlighted text: '" + request.highlighted + "'");
         
-        // Determine if this is an expression or statement(s)
         boolean isExpression = !request.highlighted.trim().endsWith(";");
         
         if (isExpression) {
-            // Extract expression - create method that returns the expression
             MethodDeclaration newMethod = bufferClass.addMethod(request.method_name, Modifier.Keyword.PRIVATE);
             
             // Try to infer return type (defaulting to int for now)
@@ -65,7 +63,6 @@ public class RefactoringEngine {
                 containingMethod.getBody().get().addStatement(stmt);
             }
         } else {
-            // Extract statement(s) - code ending with semicolon
             MethodDeclaration newMethod = bufferClass.addMethod(request.method_name, Modifier.Keyword.PRIVATE);
             newMethod.setType("void");
             
@@ -112,6 +109,7 @@ public class RefactoringEngine {
 
 	private Refactored generateGettersSetters(String source) throws RuntimeException {
 		Refactored result = new Refactored();
+
 		try {
 			CompilationUnit cu = StaticJavaParser.parse(source);
 
@@ -124,25 +122,39 @@ public class RefactoringEngine {
 					String type = field.getVariable(0).getTypeAsString();
 
 					String capitalisedName = capitalise(name);
+					String getterName = "get" + capitalisedName;
+					String setterName = "set" + capitalisedName;
 
-					MethodDeclaration getter = bufferClass.addMethod("get" + capitalisedName, Modifier.Keyword.PUBLIC);
-					getter.setType(type);
-					getter.createBody().addStatement("return " + name + ";");
+					if(!hasMethod(bufferClass, getterName)){
+						MethodDeclaration getter = bufferClass.addMethod("get" + capitalisedName, Modifier.Keyword.PUBLIC);
+						getter.setType(type);
+						getter.createBody().addStatement("return " + name + ";");
+					}
 
-					MethodDeclaration setter = bufferClass.addMethod("set" + capitalisedName, Modifier.Keyword.PUBLIC);
-					setter.addParameter(type, name);
-					setter.createBody().addStatement("this." + name + " = " + name + ";");
-
+					if(!hasMethod(bufferClass, setterName)){
+						MethodDeclaration setter = bufferClass.addMethod("set" + capitalisedName, Modifier.Keyword.PUBLIC);
+						setter.addParameter(type, name);
+						setter.createBody().addStatement("this." + name + " = " + name + ";");
+					}
 				}
 
 			}
-			result.new_source = cu.toString();
 
+			result.new_source = cu.toString();
 
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public boolean hasMethod(ClassOrInterfaceDeclaration cls, String methodName){
+		for(MethodDeclaration method: cls.getMethods()){
+			if(method.getNameAsString().equals(methodName)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	//capitalise method for correct method declaration
