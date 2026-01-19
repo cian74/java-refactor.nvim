@@ -1,6 +1,7 @@
 local backend = require("refactor.backend")
 local M = {}
 
+
 function M.generate_getters_setters()
 	-- Get current buffer content
 	local buf = vim.api.nvim_get_current_buf()

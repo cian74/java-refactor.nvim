@@ -9,4 +9,7 @@ public class Request {
 	Integer end_line;
 	String method_name;
 	String highlighted;
+
+	//getter setters
+	java.util.List<String> selected_fields;
 }
