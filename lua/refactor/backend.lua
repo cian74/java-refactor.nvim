@@ -41,6 +41,13 @@ function M.start_backend()
 				local ok, json_msg = pcall(vim.json.decode, M.json_buffer)
 				if not ok then return end
 				M.json_buffer = ""
+
+				if json_msg.fields then 
+					local actions = require("refactor.actions")
+					actions.show_field_selection_menu(json_msg.fields)
+					return
+				end
+
 				if json_msg.error then
 					local error_msg = tostring(json_msg.error or "Unknown error")
 					vim.notify("Refactoring error: " .. error_msg, vim.log.levels.ERROR)

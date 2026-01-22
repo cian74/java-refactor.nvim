@@ -24,10 +24,10 @@ public class RefactoringEngine {
 				result = extractMethod(request);
 				break;
 			case("list_fields"):
-				listFields(request.source);
+				result = listFields(request.source);
 				break;
 			case("generate_field_getters_setters"):
-				generateFieldGettersSetters(request);
+				result = generateFieldGettersSetters(request);
 				break;
 
 		}
@@ -38,7 +38,7 @@ public class RefactoringEngine {
 	private Refactored listFields(String source) throws RuntimeException {
 		Refactored result = new Refactored();
 		try {
-			CompilationUnit cu = StaticJavaParser.parse(request.source);	
+			CompilationUnit cu = StaticJavaParser.parse(source);	
 			ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
 
 			List<String> fieldNames = new ArrayList<>();
