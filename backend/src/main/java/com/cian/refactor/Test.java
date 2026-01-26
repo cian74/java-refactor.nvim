@@ -4,6 +4,7 @@ public class Test {
 
     private String name;
 
+	private String name2;
     private int age;
 
     int x = 0;
@@ -13,7 +14,11 @@ public class Test {
     public void calculate() {
         int x = 0;
         int y = 1;
-        int z = (x + y) * (x + y);
+        int z = extractedMethod();
+    }
+
+    private int extractedMethod() {
+        return (x + y) * (x + y);
     }
 
     public String getName() {
