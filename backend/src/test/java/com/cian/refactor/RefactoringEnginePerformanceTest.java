@@ -238,6 +238,24 @@ public class RefactoringEnginePerformanceTest {
         
         assertNotNull(result);
         assertTrue(durationMs < 1000, "Operation should complete in less than 1 second");
+        
+        // Test with partial field selection (simulating UI interaction)
+        request.selected_fields = Arrays.asList("name", "salary");
+        selectedCount = 2;
+        
+        startTime = System.nanoTime();
+        result = engine.applyRefactor("generate_field_getters_setters", request);
+        endTime = System.nanoTime();
+        
+        durationMs = (endTime - startTime) / 1_000_000;
+        resultSize = result != null ? result.length() : 0;
+        
+        recordMetric("Generate Partial Getters/Setters", durationMs, 
+            String.format("%d selected fields → %.0f methods (%d→%d chars)", 
+                selectedCount, selectedCount * 2.0, sourceSize, resultSize));
+        
+        assertNotNull(result);
+        assertTrue(durationMs < 1000, "Partial selection should complete in less than 1 second");
     }
     
     @Test

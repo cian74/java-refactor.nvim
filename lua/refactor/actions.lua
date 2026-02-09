@@ -107,6 +107,10 @@ function M.show_field_selection_menu(fields)
 	state.menu = menu
 	menu:mount()
 
+	-- Set proper buffer options to avoid readonly warnings
+	vim.bo[menu.bufnr].modifiable = true
+	vim.bo[menu.bufnr].readonly = false
+
 	state.cursor_autocmd = vim.api.nvim_create_autocmd("CursorMoved", {
 		buffer = menu.bufnr,
 		callback = function()
@@ -124,10 +128,12 @@ function M.show_field_selection_menu(fields)
 		local checkbox = state.selected[i] and "[x]" or "[ ]"
 		local line = checkbox .. " " .. state.fields[i]
 
-		-- Making it temporarily modifiable
+		-- ensure buffer is modifiable
 		vim.bo[menu.bufnr].modifiable = true
+		vim.bo[menu.bufnr].readonly = false
+		
+		--updates lines
 		vim.api.nvim_buf_set_lines(menu.bufnr, i - 1, i, false, { line })
-		vim.bo[menu.bufnr].modifiable = false
 	end, { buffer = menu.bufnr, nowait = true })
 end
 
