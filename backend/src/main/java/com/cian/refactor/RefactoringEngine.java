@@ -33,6 +33,16 @@ public class RefactoringEngine {
 		}
 		return gson.toJson(result);
 	}
+	
+	private Refactored inlineMethod(String source) throws RuntimeException{
+		Refactored result = new Refactored();
+		try {
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return result;
+	}
 
 
 	private Refactored listFields(String source) throws RuntimeException {
@@ -122,7 +132,7 @@ public class RefactoringEngine {
 
 				// Try to infer return type (defaulting to int for now)
 				newMethod.setType("int");
-				// Use parseExpression for expressions, then wrap in return statement
+				// For expressions, wrap in return statement
 				newMethod.getBody().get().addStatement("return " + request.highlighted.trim() + ";");
 
 				// Replace expression in original method with method call

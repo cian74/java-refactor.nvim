@@ -1,9 +1,5 @@
 TODO:
 
--implement actual refactor logic
+refactor refactoringengine.java
 
-implement refactor logic.
-
-capture statements sent.
-
-build method around highlighted method.
+start inline method logic

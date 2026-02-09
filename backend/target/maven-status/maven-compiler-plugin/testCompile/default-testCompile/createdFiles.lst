@@ -1,3 +1,4 @@
-com/cian/refactor/GenerateGettersSettersTest.class
 com/cian/refactor/RefactoringEngineCapitaliseTest.class
 com/cian/refactor/RunnerIOTest.class
+com/cian/refactor/GenerateGettersSettersTest.class
+com/cian/refactor/RefactoringEnginePerformanceTest.class

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.cian.refactor.GenerateGettersSettersTest" time="0.112" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.381" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -58,5 +58,11 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testGenerateGettersSetters" classname="com.cian.refactor.GenerateGettersSettersTest" time="0.103"/>
+  <testcase name="testGenerateFieldGettersSettersPerformance" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.008"/>
+  <testcase name="testListFieldsPerformance" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.008"/>
+  <testcase name="testMultipleOperationsBenchmark" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.159"/>
+  <testcase name="testMemoryUsageForLargeOperations" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.173"/>
+  <testcase name="testExtractMethodPerformance" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.006"/>
+  <testcase name="testGenerateGettersSettersPerformanceLarge" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.022"/>
+  <testcase name="testGenerateGettersSettersPerformanceSmall" classname="com.cian.refactor.RefactoringEnginePerformanceTest" time="0.002"/>
 </testsuite>
