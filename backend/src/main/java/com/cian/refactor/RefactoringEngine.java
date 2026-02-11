@@ -6,9 +6,12 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RefactoringEngine {
 	private static final Gson gson = new Gson();
@@ -29,17 +32,57 @@ public class RefactoringEngine {
 			case("generate_field_getters_setters"):
 				result = generateFieldGettersSetters(request);
 				break;
+			case("inline_method"):
+				result = inlineMethod(request);
+				break;
 
 		}
 		return gson.toJson(result);
 	}
 	
-	private Refactored inlineMethod(String source) throws RuntimeException{
+	private Refactored inlineMethod(Request request) throws RuntimeException{
 		Refactored result = new Refactored();
 		try {
+			CompilationUnit cu = StaticJavaParser.parse(request.source);
+			ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+
+			// find the method to inline (cursor position or method name)
+			MethodDeclaration methodToInline = findMethodAtPosition(bufferClass, request.start_line);
 			
+			if (methodToInline == null) {
+				result.error = "No method found at cursor position";
+				return result;
+			}
+
+			String methodName = methodToInline.getNameAsString();
+			
+			List<MethodCallExpr> methodCalls = cu.findAll(MethodCallExpr.class);
+			
+			for (MethodCallExpr call : methodCalls) {
+				if (call.getNameAsString().equals(methodName)) {
+					if (methodToInline.getBody().isPresent()) {
+						String methodBody = methodToInline.getBody().get().toString();
+						
+						if (isSimpleMethod(methodToInline)) {
+							// Remove outer braces and replace variables
+							String inlinedBody = processMethodBody(methodBody, methodToInline.getParameters(), call.getArguments());
+							replaceMethodCall(call, inlinedBody);
+						} else {
+							result.error = "Complex methods cannot be inlined automatically";
+							return result;
+						}
+					}
+				}
+			}
+
+			// Remove the inlined method
+			methodToInline.remove();
+
+			result.new_source = cu.toString();
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+			result.error = "Inline method failed: " + e.getMessage();
 		}
 		return result;
 	}
@@ -246,6 +289,61 @@ public class RefactoringEngine {
 	public String capitalise(String methodName){
 		if(methodName == null || methodName.isEmpty()) return methodName;
 		return methodName.substring(0,1).toUpperCase() + methodName.substring(1);
+	}
+
+	private MethodDeclaration findMethodAtPosition(ClassOrInterfaceDeclaration cls, Integer line) {
+		for (MethodDeclaration method : cls.getMethods()) {
+			if (method.getBegin().isPresent()) {
+				int methodLine = method.getBegin().get().line;
+				if (line != null && line == methodLine) {
+					return method;
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean isSimpleMethod(MethodDeclaration method) {
+		// Check if method is simple enough to inline (single return statement or simple expression)
+		if (!method.getBody().isPresent()) {
+			return false;
+		}
+		
+		int statementCount = method.getBody().get().getStatements().size();
+		return statementCount <= 1;
+	}
+
+	private String processMethodBody(String body, List<Parameter> parameters, List<com.github.javaparser.ast.expr.Expression> arguments) {
+		String processed = body;
+		
+		// Remove outer braces
+		if (processed.startsWith("{") && processed.endsWith("}")) {
+			processed = processed.substring(1, processed.length() - 1).trim();
+		}
+		
+		// Replace return statement if present
+		if (processed.startsWith("return ")) {
+			processed = processed.substring("return ".length());
+			if (processed.endsWith(";")) {
+				processed = processed.substring(0, processed.length() - 1);
+			}
+		}
+		
+		// Replace parameters with arguments
+		for (int i = 0; i < parameters.size() && i < arguments.size(); i++) {
+			String paramName = parameters.get(i).getNameAsString();
+			String argValue = arguments.get(i).toString();
+			processed = processed.replaceAll("\\b" + paramName + "\\b", argValue);
+		}
+		
+		return processed;
+	}
+
+	//yet to be implemented
+	private void replaceMethodCall(MethodCallExpr call, String replacement) {
+		// This is a simplified replacement - in a real implementation,
+		// need to handle this more carefully
+		// actual replacement would be done by replacing the parent statement
 	}
 
 }

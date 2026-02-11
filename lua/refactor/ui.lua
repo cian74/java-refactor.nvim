@@ -12,7 +12,7 @@ function M.show_menu()
 		position = "50%",
 		size = {
 			width = 40,
-			height = 8,
+			height = 9,
 		},
 		border = {
 			style = "rounded",
@@ -28,6 +28,7 @@ function M.show_menu()
 		lines = {
 			Menu.item("Generate Getters and Setters"),
 			Menu.item("Extract Method"),
+			Menu.item("Inline Method"),
 			-- Menu.item("Generate Constructor"),
 			-- Menu.item("Extract Method"),
 		},
@@ -47,6 +48,8 @@ function M.show_menu()
 				actions.generate_getters_setters()
 			elseif item.text == "Extract Method" then
 				actions.extract_method()
+			elseif item.text == "Inline Method" then
+				actions.inline_method()
 			end
 		end,
 	})

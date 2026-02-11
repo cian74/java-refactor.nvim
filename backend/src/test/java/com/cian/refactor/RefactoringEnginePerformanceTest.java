@@ -341,4 +341,74 @@ public class RefactoringEnginePerformanceTest {
         
         assertTrue(memoryUsedMb < 50, "Memory usage should be reasonable (< 50MB)");
     }
+    
+    @Test
+    @DisplayName("Performance test for inline_method operation")
+    void testInlineMethodPerformance() {
+        String classWithMethod = """
+            public class TestClass {
+                public int calculateSum(int a, int b) {
+                    return a + b;
+                }
+                
+                public void process() {
+                    int result = calculateSum(5, 10);
+                    System.out.println(result);
+                }
+            }
+            """;
+        
+        request.source = classWithMethod;
+        request.start_line = 2;  // Position of calculateSum method
+        
+        int sourceSize = classWithMethod.length();
+        
+        long startTime = System.nanoTime();
+        String result = engine.applyRefactor("inline_method", request);
+        long endTime = System.nanoTime();
+        
+        long durationMs = (endTime - startTime) / 1_000_000;
+        int resultSize = result != null ? result.length() : 0;
+        
+        recordMetric("Inline Method", durationMs, 
+            String.format("Inlined simple method (%d→%d chars)", 
+                sourceSize, resultSize));
+        
+        assertNotNull(result);
+        assertTrue(durationMs < 1000, "Inline method should complete in less than 1 second");
+        
+        // Test with multiple method calls
+        String classWithMultipleCalls = """
+            public class Calculator {
+                public int multiply(int x, int y) {
+                    return x * y;
+                }
+                
+                public void calculate() {
+                    int a = multiply(2, 3);
+                    int b = multiply(4, 5);
+                    int c = multiply(a, b);
+                    System.out.println(c);
+                }
+            }
+            """;
+        
+        request.source = classWithMultipleCalls;
+        request.start_line = 2;
+        sourceSize = classWithMultipleCalls.length();
+        
+        startTime = System.nanoTime();
+        result = engine.applyRefactor("inline_method", request);
+        endTime = System.nanoTime();
+        
+        durationMs = (endTime - startTime) / 1_000_000;
+        resultSize = result != null ? result.length() : 0;
+        
+        recordMetric("Inline Method (Multiple Calls)", durationMs, 
+            String.format("Inlined method with 3 calls (%d→%d chars)", 
+                sourceSize, resultSize));
+        
+        assertNotNull(result);
+        assertTrue(durationMs < 1000, "Multiple calls inline should complete in less than 1 second");
+    }
 }

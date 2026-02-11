@@ -177,5 +177,18 @@ function M.extract_method()
 	end)
 end
 
+function M.inline_method()
+	local buf = vim.api.nvim_get_current_buf()
+	local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	local source = table.concat(lines, "\n")
+
+	backend.send_request({
+		command = "inline_method",
+		source = source,
+		start_line = cursor_line,
+	})
+end
+
 return M
 
