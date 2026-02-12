@@ -8,9 +8,12 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.stmt.Statement;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Optional;
 
 public class RefactoringEngine {
@@ -173,16 +176,16 @@ public class RefactoringEngine {
 			if (isExpression) {
 				MethodDeclaration newMethod = bufferClass.addMethod(request.method_name, Modifier.Keyword.PRIVATE);
 
-				// Try to infer return type (defaulting to int for now)
+				// inferring return type (defaulting to int for now)
 				newMethod.setType("int");
-				// For expressions, wrap in return statement
+				// for expressions, wrap in return statement
 				newMethod.getBody().get().addStatement("return " + request.highlighted.trim() + ";");
 
-				// Replace expression in original method with method call
+				// replace expression in original method with method call
 				String originalBody = containingMethod.getBody().get().toString();
 				String modifiedBody = originalBody.replace(request.highlighted, request.method_name + "()");
 
-				// Re-parse the body
+				// re-parse body
 				containingMethod.getBody().get().getStatements().clear();
 				CompilationUnit tempCu = StaticJavaParser.parse("class Temp { void temp() " + modifiedBody + " }");
 				MethodDeclaration tempMethod = tempCu.findFirst(MethodDeclaration.class).get();
@@ -293,9 +296,12 @@ public class RefactoringEngine {
 
 	private MethodDeclaration findMethodAtPosition(ClassOrInterfaceDeclaration cls, Integer line) {
 		for (MethodDeclaration method : cls.getMethods()) {
-			if (method.getBegin().isPresent()) {
-				int methodLine = method.getBegin().get().line;
-				if (line != null && line == methodLine) {
+			if (method.getBegin().isPresent() && method.getEnd().isPresent()) {
+				int methodStart = method.getBegin().get().line;
+				int methodEnd = method.getEnd().get().line;
+				
+				// Check if cursor is on the method definition line or anywhere within the method
+				if (line != null && line >= methodStart && line <= methodEnd) {
 					return method;
 				}
 			}
@@ -339,11 +345,29 @@ public class RefactoringEngine {
 		return processed;
 	}
 
-	//yet to be implemented
 	private void replaceMethodCall(MethodCallExpr call, String replacement) {
-		// This is a simplified replacement - in a real implementation,
-		// need to handle this more carefully
-		// actual replacement would be done by replacing the parent statement
+		try {
+			var replacementExpr = StaticJavaParser.parseExpression(replacement);
+			
+			// Check assignment context 
+			Optional<Node> parentOpt = call.getParentNode();
+			if (parentOpt.isPresent()) {
+				Node parent = parentOpt.get();
+				
+				// If parent is an AssignExpr, we need to replace the right side
+				if (parent instanceof com.github.javaparser.ast.expr.AssignExpr) {
+					var assignExpr = (com.github.javaparser.ast.expr.AssignExpr) parent;
+					assignExpr.setValue(replacementExpr);
+				} else {
+					call.replace(replacementExpr);
+				}
+			} else {
+				// Fallback
+				call.replace(replacementExpr);
+			}
+		} catch (Exception e) {
+			System.err.println("Failed to replace method call: " + e.getMessage());
+		}
 	}
 
 }
