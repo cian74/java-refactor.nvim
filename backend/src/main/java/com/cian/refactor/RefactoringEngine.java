@@ -10,10 +10,10 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Optional;
 
 public class RefactoringEngine {
@@ -41,9 +41,173 @@ public class RefactoringEngine {
 			case("generate_toString"):
 				result = generateToString(request.source);
 				break;
+			case("extract_variable"):
+				result = extractVariable(request);
+				break;
 
 		}
 		return gson.toJson(result);
+	}
+
+	private Refactored extractVariable(Request request) throws RuntimeException{
+		Refactored result = new Refactored();
+		try {
+			CompilationUnit cu = StaticJavaParser.parse(request.source);
+			ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+			
+			// gettting highlighted expression + variable name
+			String highlighted = request.highlighted;
+			String varName = request.var_name;
+			
+			if (highlighted == null || highlighted.isEmpty()) {
+				result.error = "No expression selected to extract";
+				return result;
+			}
+			
+			if (varName == null || varName.isEmpty()) {
+				result.error = "No variable name provided";
+				return result;
+			}
+
+			// Find the method containing the highlighted expression
+			MethodDeclaration containingMethod = findMethodContainingLine(bufferClass, request.start_line);
+			
+			if (containingMethod == null || !containingMethod.getBody().isPresent()) {
+				result.error = "Could not find method containing the expression";
+				return result;
+			}
+			
+			BlockStmt methodBody = containingMethod.getBody().get();
+			boolean found = false;
+			
+			// find and replace expression
+			for (int i = 0; i < methodBody.getStatements().size(); i++) {
+				Statement stmt = methodBody.getStatements().get(i);
+				String stmtStr = stmt.toString();
+				
+				// check if this statement contains the highlighted expression
+				if (stmtStr.contains(highlighted)) {
+					found = true;
+					
+					String varType = inferType(highlighted);
+					
+					String varDeclaration = varType + " " + varName + " = " + highlighted + ";";
+					Statement varStmt = StaticJavaParser.parseStatement(varDeclaration);
+					methodBody.addStatement(i, varStmt);
+					
+					String modifiedStmt = stmtStr.replace(highlighted, varName);
+					Statement modifiedStatement = StaticJavaParser.parseStatement(modifiedStmt);
+					methodBody.getStatements().set(i, modifiedStatement);
+					
+					break;
+				}
+			}
+			
+			if (!found) {
+				result.error = "Could not find the selected expression in the code";
+				return result;
+			}
+
+			result.new_source = cu.toString();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.error = "Extract variable failed: " + e.getMessage();
+		}
+
+		return result;
+	}
+	
+	private MethodDeclaration findMethodContainingLine(ClassOrInterfaceDeclaration cls, Integer line) {
+		for (MethodDeclaration method : cls.getMethods()) {
+			if (method.getBegin().isPresent() && method.getEnd().isPresent()) {
+				int methodStart = method.getBegin().get().line;
+				int methodEnd = method.getEnd().get().line;
+				
+				if (line != null && line >= methodStart && line <= methodEnd) {
+					return method;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private String inferType(String expression) {
+		// Simple type inference based on the expression
+		expression = expression.trim();
+		
+		// String literals
+		if (expression.startsWith("\"") && expression.endsWith("\"")) {
+			return "String";
+		}
+		
+		// Boolean literals
+		if (expression.equals("true") || expression.equals("false")) {
+			return "boolean";
+		}
+		
+		// Character literals
+		if (expression.startsWith("'") && expression.endsWith("'")) {
+			return "char";
+		}
+		
+		// Method calls - try to infer from method name patterns
+		if (expression.contains("(") && expression.contains(")")) {
+			// Common method patterns
+			if (expression.contains(".length()")) {
+				return "int";
+			}
+			if (expression.contains(".toString()")) {
+				return "String";
+			}
+			if (expression.contains(".toLowerCase()") || expression.contains(".toUpperCase()")) {
+				return "String";
+			}
+			if (expression.contains(".trim()")) {
+				return "String";
+			}
+			if (expression.contains(".equals(")) {
+				return "boolean";
+			}
+			if (expression.contains(".hashCode()")) {
+				return "int";
+			}
+			// Default for method calls - check common prefixes
+			if (expression.startsWith("get") || expression.startsWith("calculate") 
+				|| expression.startsWith("compute") || expression.startsWith("find")) {
+				return "String"; // Often returns String
+			}
+			if (expression.startsWith("is") || expression.startsWith("has") || expression.startsWith("check")) {
+				return "boolean";
+			}
+			if (expression.startsWith("count") || expression.startsWith("get") || expression.startsWith("size")) {
+				return "int";
+			}
+		}
+		
+		// Arithmetic expressions
+		if (expression.contains("+") || expression.contains("-") || expression.contains("*") 
+			|| expression.contains("/") || expression.contains("%")) {
+			// Check for floating point
+			if (expression.contains(".")) {
+				return "double";
+			}
+			return "int";
+		}
+		
+		// Comparison operators
+		if (expression.contains("==") || expression.contains("!=") || expression.contains(">") 
+			|| expression.contains("<") || expression.contains(">=") || expression.contains("<=")) {
+			return "boolean";
+		}
+		
+		// Logical operators
+		if (expression.contains("&&") || expression.contains("||")) {
+			return "boolean";
+		}
+		
+		// Default to Object for complex expressions
+		return "var"; // Use Java 10+ var for type inference
 	}
 	
 	private Refactored inlineMethod(Request request) throws RuntimeException{

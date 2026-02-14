@@ -1,4 +1,5 @@
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/RefactoringEngineCapitaliseTest.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/ExtractVariableTest.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/RefactoringEnginePerformanceTest.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/GenerateGettersSettersTest.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/test/java/com/cian/refactor/RunnerIOTest.java
