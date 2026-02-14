@@ -38,6 +38,9 @@ public class RefactoringEngine {
 			case("inline_method"):
 				result = inlineMethod(request);
 				break;
+			case("generate_toString"):
+				result = generateToString(request.source);
+				break;
 
 		}
 		return gson.toJson(result);
@@ -156,6 +159,7 @@ public class RefactoringEngine {
 		return result;
 	}
 
+	//extracts logic to another method
 	private Refactored extractMethod(Request request) throws RuntimeException {
 		Refactored result = new Refactored(); 
 		try {
@@ -222,6 +226,7 @@ public class RefactoringEngine {
 		return result;
 	}
 
+	//helper method for handling highlighted methods
 	private MethodDeclaration findHighlightedMethod(ClassOrInterfaceDeclaration cls, int startLine, int endLine){
 		for(MethodDeclaration method : cls.getMethods()){
 			if(method.getBegin().isPresent() && method.getEnd().isPresent()){
@@ -238,6 +243,7 @@ public class RefactoringEngine {
 		return null;
 	}
 
+	//generating getters and setters for private fields
 	private Refactored generateGettersSetters(String source) throws RuntimeException {
 		Refactored result = new Refactored();
 
@@ -275,6 +281,74 @@ public class RefactoringEngine {
 
 		} catch (RuntimeException e) {
 			e.printStackTrace();
+		}
+		return result;
+	}
+
+	//generating toString method for private fields
+	private Refactored generateToString(String source) throws RuntimeException {
+		Refactored result = new Refactored();
+
+		try {
+			CompilationUnit cu = StaticJavaParser.parse(source);
+
+			ClassOrInterfaceDeclaration bufferClass = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+
+			// check if toString already exists
+			if (hasMethod(bufferClass, "toString")) {
+				result.error = "toString() method already exists";
+				return result;
+			}
+
+			// get all private fields
+			List<String> fieldNames = new ArrayList<>();
+			
+			for(FieldDeclaration field : bufferClass.getFields()){
+				if(field.isPrivate()){
+					String name = field.getVariable(0).getNameAsString();
+					fieldNames.add(name);
+				}
+			}
+
+			if (fieldNames.isEmpty()) {
+				result.error = "No private fields found in class";
+				return result;
+			}
+
+			// get class name for toString
+			String className = bufferClass.getNameAsString();
+
+			// Building toString 
+			MethodDeclaration toStringMethod = bufferClass.addMethod("toString", Modifier.Keyword.PUBLIC);
+			toStringMethod.setType("String");
+
+			// build return statement using AST nodes 
+			// creating toString manually
+			StringBuilder sb = new StringBuilder();
+			sb.append("\"");
+			sb.append(className);
+			sb.append("{\" + ");
+			
+			for (int i = 0; i < fieldNames.size(); i++) {
+				sb.append("\"");
+				sb.append(fieldNames.get(i));
+				sb.append("=\" + String.valueOf(");
+				sb.append(fieldNames.get(i));
+				sb.append(")");
+				if (i < fieldNames.size() - 1) {
+					sb.append(" + \", \" + ");
+				}
+			}
+			
+			sb.append(" + \"}\"");
+
+			toStringMethod.createBody().addStatement("return " + sb.toString() + ";");
+
+			result.new_source = cu.toString();
+
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			result.error = e.getMessage();
 		}
 		return result;
 	}

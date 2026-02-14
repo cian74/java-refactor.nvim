@@ -12,7 +12,7 @@ function M.show_menu()
 		position = "50%",
 		size = {
 			width = 40,
-			height = 9,
+			height = 8,
 		},
 		border = {
 			style = "rounded",
@@ -27,6 +27,7 @@ function M.show_menu()
 	}, {
 		lines = {
 			Menu.item("Generate Getters and Setters"),
+			Menu.item("Generate toString"),
 			Menu.item("Extract Method"),
 			Menu.item("Inline Method"),
 			-- Menu.item("Generate Constructor"),
@@ -46,6 +47,8 @@ function M.show_menu()
 			vim.notify("Selected: " .. item.text, vim.log.levels.INFO)
 			if item.text == "Generate Getters and Setters" then
 				actions.generate_getters_setters()
+			elseif item.text == "Generate toString" then
+				actions.generate_to_string()
 			elseif item.text == "Extract Method" then
 				actions.extract_method()
 			elseif item.text == "Inline Method" then

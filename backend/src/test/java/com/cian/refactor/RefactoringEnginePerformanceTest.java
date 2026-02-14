@@ -411,4 +411,86 @@ public class RefactoringEnginePerformanceTest {
         assertNotNull(result);
         assertTrue(durationMs < 1000, "Multiple calls inline should complete in less than 1 second");
     }
+    
+    @Test
+    @DisplayName("Performance test for generate_toString operation")
+    void testGenerateToStringPerformance() {
+        String smallClass = """
+            public class Person {
+                private String name;
+                private int age;
+                private boolean active;
+            }
+            """;
+        
+        request.source = smallClass;
+        
+        int fieldCount = 3;
+        int sourceSize = smallClass.length();
+        
+        long startTime = System.nanoTime();
+        String result = engine.applyRefactor("generate_toString", request);
+        long endTime = System.nanoTime();
+        
+        long durationMs = (endTime - startTime) / 1_000_000;
+        int resultSize = result != null ? result.length() : 0;
+        
+        recordMetric("Generate toString (Small)", durationMs, 
+            String.format("%d fields (%d→%d chars)", 
+                fieldCount, sourceSize, resultSize));
+        
+        assertNotNull(result);
+        assertTrue(durationMs < 1000, "Generate toString should complete in less than 1 second");
+        
+        // Test with large class
+        StringBuilder largeClass = new StringBuilder("public class LargeClass {\n");
+        int largeFieldCount = 50;
+        for (int i = 0; i < largeFieldCount; i++) {
+            largeClass.append("    private String field").append(i).append(";\n");
+        }
+        largeClass.append("}");
+        
+        request.source = largeClass.toString();
+        sourceSize = largeClass.toString().length();
+        
+        startTime = System.nanoTime();
+        result = engine.applyRefactor("generate_toString", request);
+        endTime = System.nanoTime();
+        
+        durationMs = (endTime - startTime) / 1_000_000;
+        resultSize = result != null ? result.length() : 0;
+        
+        recordMetric("Generate toString (Large)", durationMs, 
+            String.format("%d fields (%d→%d chars)", 
+                largeFieldCount, sourceSize, resultSize));
+        
+        assertNotNull(result);
+        assertTrue(durationMs < 2000, "Generate toString for large class should complete in less than 2 seconds");
+        
+        // Test duplicate toString handling
+        String classWithExistingToString = """
+            public class Person {
+                private String name;
+                
+                @Override
+                public String toString() {
+                    return "Person{}";
+                }
+            }
+            """;
+        
+        request.source = classWithExistingToString;
+        
+        startTime = System.nanoTime();
+        result = engine.applyRefactor("generate_toString", request);
+        endTime = System.nanoTime();
+        
+        durationMs = (endTime - startTime) / 1_000_000;
+        
+        recordMetric("Generate toString (Duplicate)", durationMs, 
+            String.format("Detected existing toString"));
+        
+        assertNotNull(result);
+        assertTrue(result.contains("error"), "Should return error when toString already exists");
+    }
 }
