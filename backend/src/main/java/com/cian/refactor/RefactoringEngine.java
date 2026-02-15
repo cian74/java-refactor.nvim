@@ -69,7 +69,6 @@ public class RefactoringEngine {
 				return result;
 			}
 
-			// Find the method containing the highlighted expression
 			MethodDeclaration containingMethod = findMethodContainingLine(bufferClass, request.start_line);
 			
 			if (containingMethod == null || !containingMethod.getBody().isPresent()) {
@@ -80,24 +79,27 @@ public class RefactoringEngine {
 			BlockStmt methodBody = containingMethod.getBody().get();
 			boolean found = false;
 			
-			// find and replace expression
 			for (int i = 0; i < methodBody.getStatements().size(); i++) {
 				Statement stmt = methodBody.getStatements().get(i);
 				String stmtStr = stmt.toString();
 				
-				// check if this statement contains the highlighted expression
 				if (stmtStr.contains(highlighted)) {
 					found = true;
 					
+					// Infer variable type
 					String varType = inferType(highlighted);
 					
+					String modifiedStmtStr = stmtStr.replace(highlighted, varName);
+					
 					String varDeclaration = varType + " " + varName + " = " + highlighted + ";";
+					
+					Statement modifiedStatement = StaticJavaParser.parseStatement(modifiedStmtStr);
 					Statement varStmt = StaticJavaParser.parseStatement(varDeclaration);
+					
 					methodBody.addStatement(i, varStmt);
 					
-					String modifiedStmt = stmtStr.replace(highlighted, varName);
-					Statement modifiedStatement = StaticJavaParser.parseStatement(modifiedStmt);
-					methodBody.getStatements().set(i, modifiedStatement);
+					// Replace the original statement (now at i+1) with the modified one
+					methodBody.getStatements().set(i + 1, modifiedStatement);
 					
 					break;
 				}

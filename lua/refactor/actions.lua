@@ -201,5 +201,32 @@ function M.generate_to_string()
 	})
 end
 
+function M.extract_variable()
+	local buf = vim.api.nvim_get_current_buf()
+	local start_pos = vim.fn.getpos("'<")
+	local end_pos = vim.fn.getpos("'>")
+	local highlighted = vim.api.nvim_buf_get_text(buf, start_pos[2] - 1, start_pos[3] - 1, end_pos[2] - 1, end_pos[3], {})[1]
+	
+	local start_line = start_pos[2]
+	
+	vim.ui.input({ prompt = "Enter variable name: " }, function(var_name)
+		if not var_name or var_name == "" then
+			vim.notify("No variable name provided", vim.log.levels.WARN)
+			return
+		end
+		
+		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		local source = table.concat(lines, "\n")
+		
+		backend.send_request({
+			command = "extract_variable",
+			source = source,
+			highlighted = highlighted,
+			var_name = var_name,
+			start_line = start_line,
+		})
+	end)
+end
+
 return M
 

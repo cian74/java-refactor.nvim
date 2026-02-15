@@ -29,9 +29,9 @@ function M.show_menu()
 			Menu.item("Generate Getters and Setters"),
 			Menu.item("Generate toString"),
 			Menu.item("Extract Method"),
+			Menu.item("Extract Variable"),
 			Menu.item("Inline Method"),
 			-- Menu.item("Generate Constructor"),
-			-- Menu.item("Extract Method"),
 		},
 		max_width = 30,
 		keymap = {
@@ -53,6 +53,8 @@ function M.show_menu()
 				actions.extract_method()
 			elseif item.text == "Inline Method" then
 				actions.inline_method()
+			elseif item.text == "Extract Variable" then
+				actions.extract_variable()
 			end
 		end,
 	})

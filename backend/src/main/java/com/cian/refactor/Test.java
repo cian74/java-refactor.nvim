@@ -2,7 +2,7 @@ package com.cian.refactor;
 
 public class Test {
 
-    private String name;
+    String name = "Bob";
 
     private String name2;
 
@@ -16,8 +16,15 @@ public class Test {
 
     public void calculate() {
         int x = 0;
-        int y = 1;
+        int y = 1 + (x + 7);
         int z = extractedMethod();
+    }
+
+    public void stringOp() {
+        String lowerName = name.toLowerCase();
+        if (lowerName.equals("Bob")) {
+            System.out.println("Name is bob");
+        }
     }
 
     public String getName() {
