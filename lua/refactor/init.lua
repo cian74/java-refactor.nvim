@@ -4,22 +4,27 @@ local ui = require("refactor.ui")
 local M = {}
 
 function M.start_backend()
-  backend.start_backend()
+	backend.start_backend()
 end
 
 function M.menu()
-  ui.show_menu()
+	ui.show_menu()
+end
+
+function M.help()
+	ui.show_help()
 end
 
 vim.keymap.set('n', '<leader>jf', function()
-        ui.show_menu()
-    end, { desc = 'Java Refactor Menu' })
+	ui.show_menu()
+end, { desc = 'Java Refactor Menu' })
 
 vim.keymap.set('v', '<leader>J', function()
-        ui.show_menu()
-    end, { desc = 'Java Refactor Menu' })
+	ui.show_menu()
+end, { desc = 'Java Refactor Menu' })
 --vim.notify("java-refactor plugin loaded!", vim.log.levels.INFO)
 vim.api.nvim_create_user_command("RefactorStart", M.start_backend, {})
 vim.api.nvim_create_user_command("RefactorMenu", M.menu, {})
+vim.api.nvim_create_user_command("RefactorHelp", M.help, {})
 
 return M

@@ -14,4 +14,5 @@ idea similar to 99 search
 
 help menu / command?
 
+exception flow visualiser 
 
