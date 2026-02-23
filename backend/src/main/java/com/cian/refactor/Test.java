@@ -16,8 +16,8 @@ public class Test {
 
     public void calculate() {
         int x = 0;
-        int y = 1 + (x + 7);
-        int z = extractedMethod();
+        int y = extractedMethod2();
+        int z = (x + y) * (x + y);
     }
 
     public void stringOp() {
@@ -43,12 +43,28 @@ public class Test {
         this.age = age;
     }
 
-    private int extractedMethod() {
-        return (x + y) * (x + y);
+    public String getName2() {
+        return name2;
+    }
+
+    public void setName2(String name2) {
+        this.name2 = name2;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    private int extractedMethod2() {
+        return 1 + (x + 7);
     }
 
     public String toString() {
-        return "Test{" + "name=" + String.valueOf(name) + ", " + "name2=" + String.valueOf(name2) + ", " + "major=" + String.valueOf(major) + ", " + "age=" + String.valueOf(age) + "}";
+        return "Test{" + "name2=" + String.valueOf(name2) + ", " + "major=" + String.valueOf(major) + ", " + "age=" + String.valueOf(age) + "}";
     }
 }
 
