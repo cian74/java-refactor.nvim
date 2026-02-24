@@ -22,13 +22,8 @@ function M.start_backend()
 		return true
 	end
 
-	-- Debug: print paths
-	vim.notify("Plugin root: " .. plugin_root, vim.log.levels.INFO)
-	vim.notify("Looking for JAR at: " .. jar_path, vim.log.levels.INFO)
-	vim.notify("File readable: " .. vim.fn.filereadable(jar_path), vim.log.levels.INFO)
-
 	if vim.fn.filereadable(jar_path) == 0 then
-		vim.notify("Backend JAR not found at path : " .. jar_path, vim.log.levels.ERROR)
+		vim.notify("Backend JAR not found at path: " .. jar_path, vim.log.levels.ERROR)
 		return false
 	end
 	M.job = Job:new({
@@ -57,7 +52,6 @@ function M.start_backend()
 					local lines = vim.split(json_msg.new_source, "\n")
 					if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
 						vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
-						--vim.notify("Refactoring applied", vim.log.levels.INFO)
 					end
 				end
 			end)
