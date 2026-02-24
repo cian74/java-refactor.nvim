@@ -21,6 +21,11 @@ public class RefactoringEngine {
 	Refactored result = new Refactored();
 	Request request = new Request();
 
+	private ClassOrInterfaceDeclaration parseClass(String source) {
+		CompilationUnit cu = StaticJavaParser.parse(source);
+		return cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+	}
+
 	public String applyRefactor(String command, Request request){
 		switch (command) {
 			case("generate_getters_setters"):
@@ -118,98 +123,6 @@ public class RefactoringEngine {
 		}
 
 		return result;
-	}
-	
-	private MethodDeclaration findMethodContainingLine(ClassOrInterfaceDeclaration cls, Integer line) {
-		for (MethodDeclaration method : cls.getMethods()) {
-			if (method.getBegin().isPresent() && method.getEnd().isPresent()) {
-				int methodStart = method.getBegin().get().line;
-				int methodEnd = method.getEnd().get().line;
-				
-				if (line != null && line >= methodStart && line <= methodEnd) {
-					return method;
-				}
-			}
-		}
-		return null;
-	}
-	
-	private String inferType(String expression) {
-		// Simple type inference based on the expression
-		expression = expression.trim();
-		
-		// String literals
-		if (expression.startsWith("\"") && expression.endsWith("\"")) {
-			return "String";
-		}
-		
-		// Boolean literals
-		if (expression.equals("true") || expression.equals("false")) {
-			return "boolean";
-		}
-		
-		// Character literals
-		if (expression.startsWith("'") && expression.endsWith("'")) {
-			return "char";
-		}
-		
-		// Method calls - try to infer from method name patterns
-		if (expression.contains("(") && expression.contains(")")) {
-			// Common method patterns
-			if (expression.contains(".length()")) {
-				return "int";
-			}
-			if (expression.contains(".toString()")) {
-				return "String";
-			}
-			if (expression.contains(".toLowerCase()") || expression.contains(".toUpperCase()")) {
-				return "String";
-			}
-			if (expression.contains(".trim()")) {
-				return "String";
-			}
-			if (expression.contains(".equals(")) {
-				return "boolean";
-			}
-			if (expression.contains(".hashCode()")) {
-				return "int";
-			}
-			// Default for method calls - check common prefixes
-			if (expression.startsWith("get") || expression.startsWith("calculate") 
-				|| expression.startsWith("compute") || expression.startsWith("find")) {
-				return "String"; // Often returns String
-			}
-			if (expression.startsWith("is") || expression.startsWith("has") || expression.startsWith("check")) {
-				return "boolean";
-			}
-			if (expression.startsWith("count") || expression.startsWith("get") || expression.startsWith("size")) {
-				return "int";
-			}
-		}
-		
-		// Arithmetic expressions
-		if (expression.contains("+") || expression.contains("-") || expression.contains("*") 
-			|| expression.contains("/") || expression.contains("%")) {
-			// Check for floating point
-			if (expression.contains(".")) {
-				return "double";
-			}
-			return "int";
-		}
-		
-		// Comparison operators
-		if (expression.contains("==") || expression.contains("!=") || expression.contains(">") 
-			|| expression.contains("<") || expression.contains(">=") || expression.contains("<=")) {
-			return "boolean";
-		}
-		
-		// Logical operators
-		if (expression.contains("&&") || expression.contains("||")) {
-			return "boolean";
-		}
-		
-		// Default to Object for complex expressions
-		return "var"; // Use Java 10+ var for type inference
 	}
 	
 	private Refactored inlineMethod(Request request) throws RuntimeException{
@@ -392,23 +305,6 @@ public class RefactoringEngine {
 		return result;
 	}
 
-	//helper method for handling highlighted methods
-	private MethodDeclaration findHighlightedMethod(ClassOrInterfaceDeclaration cls, int startLine, int endLine){
-		for(MethodDeclaration method : cls.getMethods()){
-			if(method.getBegin().isPresent() && method.getEnd().isPresent()){
-				int methodStart = method.getBegin().get().line;
-				int methodEnd = method.getEnd().get().line;
-
-				System.err.println("Checking Method: " + method.getNameAsString() + " start: " + methodStart + " end: " + methodEnd);
-
-				if (startLine >= methodStart && endLine <= methodEnd) {
-					return method;
-				}
-			}
-		}
-		return null;
-	}
-
 	//generating getters and setters for private fields
 	private Refactored generateGettersSetters(String source) throws RuntimeException {
 		Refactored result = new Refactored();
@@ -519,45 +415,7 @@ public class RefactoringEngine {
 		return result;
 	}
 
-	public boolean hasMethod(ClassOrInterfaceDeclaration cls, String methodName){
-		for(MethodDeclaration method: cls.getMethods()){
-			if(method.getNameAsString().equals(methodName)){
-				return true;
-			}
-		}
-		return false;
-	}
-
 	//capitalise method for correct method declaration
-	public String capitalise(String methodName){
-		if(methodName == null || methodName.isEmpty()) return methodName;
-		return methodName.substring(0,1).toUpperCase() + methodName.substring(1);
-	}
-
-	private MethodDeclaration findMethodAtPosition(ClassOrInterfaceDeclaration cls, Integer line) {
-		for (MethodDeclaration method : cls.getMethods()) {
-			if (method.getBegin().isPresent() && method.getEnd().isPresent()) {
-				int methodStart = method.getBegin().get().line;
-				int methodEnd = method.getEnd().get().line;
-				
-				// Check if cursor is on the method definition line or anywhere within the method
-				if (line != null && line >= methodStart && line <= methodEnd) {
-					return method;
-				}
-			}
-		}
-		return null;
-	}
-
-	private boolean isSimpleMethod(MethodDeclaration method) {
-		// Check if method is simple enough to inline (single return statement or simple expression)
-		if (!method.getBody().isPresent()) {
-			return false;
-		}
-		
-		int statementCount = method.getBody().get().getStatements().size();
-		return statementCount <= 1;
-	}
 
 	private String processMethodBody(String body, List<Parameter> parameters, List<com.github.javaparser.ast.expr.Expression> arguments) {
 		String processed = body;
@@ -610,4 +468,152 @@ public class RefactoringEngine {
 		}
 	}
 
+	//Helper Methods
+
+	public String capitalise(String methodName){
+		if(methodName == null || methodName.isEmpty()) return methodName;
+		return methodName.substring(0,1).toUpperCase() + methodName.substring(1);
+	}
+
+	public boolean hasMethod(ClassOrInterfaceDeclaration cls, String methodName){
+		for(MethodDeclaration method: cls.getMethods()){
+			if(method.getNameAsString().equals(methodName)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String inferType(String expression) {
+		// Simple type inference based on the expression
+		expression = expression.trim();
+
+		// String literals
+		if (expression.startsWith("\"") && expression.endsWith("\"")) {
+			return "String";
+		}
+
+		// Boolean literals
+		if (expression.equals("true") || expression.equals("false")) {
+			return "boolean";
+		}
+
+		// Character literals
+		if (expression.startsWith("'") && expression.endsWith("'")) {
+			return "char";
+		}
+
+		// Method calls - try to infer from method name patterns
+		if (expression.contains("(") && expression.contains(")")) {
+			// Common method patterns
+			if (expression.contains(".length()")) {
+				return "int";
+			}
+			if (expression.contains(".toString()")) {
+				return "String";
+			}
+			if (expression.contains(".toLowerCase()") || expression.contains(".toUpperCase()")) {
+				return "String";
+			}
+			if (expression.contains(".trim()")) {
+				return "String";
+			}
+			if (expression.contains(".equals(")) {
+				return "boolean";
+			}
+			if (expression.contains(".hashCode()")) {
+				return "int";
+			}
+			// Default for method calls - check common prefixes
+			if (expression.startsWith("get") || expression.startsWith("calculate") 
+					|| expression.startsWith("compute") || expression.startsWith("find")) {
+				return "String"; // Often returns String
+					}
+			if (expression.startsWith("is") || expression.startsWith("has") || expression.startsWith("check")) {
+				return "boolean";
+			}
+			if (expression.startsWith("count") || expression.startsWith("get") || expression.startsWith("size")) {
+				return "int";
+			}
+		}
+
+		// Arithmetic expressions
+		if (expression.contains("+") || expression.contains("-") || expression.contains("*") 
+				|| expression.contains("/") || expression.contains("%")) {
+			// Check for floating point
+			if (expression.contains(".")) {
+				return "double";
+			}
+			return "int";
+				}
+
+		// Comparison operators
+		if (expression.contains("==") || expression.contains("!=") || expression.contains(">") 
+				|| expression.contains("<") || expression.contains(">=") || expression.contains("<=")) {
+			return "boolean";
+				}
+
+		// Logical operators
+		if (expression.contains("&&") || expression.contains("||")) {
+			return "boolean";
+		}
+
+		// Default to Object for complex expressions
+		return "var"; // Use Java 10+ var for type inference
+	}
+
+	private boolean isSimpleMethod(MethodDeclaration method) {
+		// Check if method is simple enough to inline (single return statement or simple expression)
+		if (!method.getBody().isPresent()) {
+			return false;
+		}
+
+		int statementCount = method.getBody().get().getStatements().size();
+		return statementCount <= 1;
+	}
+
+	private MethodDeclaration findMethodAtPosition(ClassOrInterfaceDeclaration cls, Integer line) {
+		for (MethodDeclaration method : cls.getMethods()) {
+			if (method.getBegin().isPresent() && method.getEnd().isPresent()) {
+				int methodStart = method.getBegin().get().line;
+				int methodEnd = method.getEnd().get().line;
+
+				// Check if cursor is on the method definition line or anywhere within the method
+				if (line != null && line >= methodStart && line <= methodEnd) {
+					return method;
+				}
+			}
+		}
+		return null;
+	}
+
+	private MethodDeclaration findMethodContainingLine(ClassOrInterfaceDeclaration cls, Integer line) {
+		for (MethodDeclaration method : cls.getMethods()) {
+			if (method.getBegin().isPresent() && method.getEnd().isPresent()) {
+				int methodStart = method.getBegin().get().line;
+				int methodEnd = method.getEnd().get().line;
+
+				if (line != null && line >= methodStart && line <= methodEnd) {
+					return method;
+				}
+			}
+		}
+		return null;
+	}
+	//helper method for handling highlighted methods
+	private MethodDeclaration findHighlightedMethod(ClassOrInterfaceDeclaration cls, int startLine, int endLine){
+		for(MethodDeclaration method : cls.getMethods()){
+			if(method.getBegin().isPresent() && method.getEnd().isPresent()){
+				int methodStart = method.getBegin().get().line;
+				int methodEnd = method.getEnd().get().line;
+
+				System.err.println("Checking Method: " + method.getNameAsString() + " start: " + methodStart + " end: " + methodEnd);
+
+				if (startLine >= methodStart && endLine <= methodEnd) {
+					return method;
+				}
+			}
+		}
+		return null;
+	}
 }
