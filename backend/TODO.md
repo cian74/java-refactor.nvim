@@ -21,10 +21,15 @@ exception flow visualiser
 
 FIX
 
-delay when using motion vs menu
 refactor and seperate code.
 make binds customisable
+flame graph
+opencode refactor 
+add all other refactor features
 
-moving helper methods. clear distinguishment between helper methods and refactor methods
+accept changes for big refactors
 
-capitalise, hasMethod, inferType, isSimpleMethod, findMethodAtPosition, findMethodContainingLine, findHighlightedMethod
+tests for current features
+integration tests
+
+program flow chart

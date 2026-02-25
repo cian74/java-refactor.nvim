@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/*
+ * RefactoringEngine is the class that handles refactoring logic requests
+ */
+
 public class RefactoringEngine {
 	private static final Gson gson = new Gson();
 	Refactored result = new Refactored();

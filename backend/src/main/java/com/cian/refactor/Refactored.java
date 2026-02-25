@@ -1,8 +1,8 @@
 package com.cian.refactor;
 
-public class Refactored{
-	String originalSource;
-	String new_source;
-	String error;
-	java.util.List<String> fields;
+public class Refactored {
+    public String originalSource;
+    public String new_source;
+    public String error;
+    public java.util.List<String> fields;
 }
