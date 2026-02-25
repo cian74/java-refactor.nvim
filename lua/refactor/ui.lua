@@ -1,4 +1,5 @@
 local Menu = require("nui.menu")
+local Popup = require("nui.popup")
 local actions = require("refactor.actions")
 local backend = require("refactor.backend")
 
@@ -63,105 +64,51 @@ function M.show_menu()
 end
 
 function M.show_help()
-	local help_text = {
-		"",
-		"═══════════════════════════════════════════════════════════════════════",
-		"                      JAVA REFACTOR COMMANDS",
-		"═══════════════════════════════════════════════════════════════════════",
-		"",
-		"  Commands:",
-		"──────────────────────────────────────────────────────────────────────",
-		"  :RefactorStart    - Start the Java backend server",
-		"  :RefactorMenu    - Open the refactoring menu",
-		"  :RefactorHelp    - Show this help menu",
-		"",
-		"  Quick Keybindings:",
-		"──────────────────────────────────────────────────────────────────────",
-		"  <leader>gg    - Generate Getters/Setters (normal)",
-		"  <leader>gt    - Generate toString (normal)",
-		"  <leader>im    - Inline Method (normal, cursor on method)",
-		"  <leader>ev    - Extract Variable (visual, select expression)",
-		"  <leader>er    - Extract Method (visual, select code)",
-		"  <leader>jf    - Open menu (normal)",
-		"",
-		"  Features:",
-		"──────────────────────────────────────────────────────────────────────",
-		"  Generate Getters and Setters",
-		"    → Generates getter and setter methods for private fields",
-		"    → Select which fields to include via menu",
-		"",
-		"  Generate toString",
-		"    → Generates a toString() method with all private fields",
-		"    → Format: ClassName{field1=value1, field2=value2}",
-		"",
-		"  Extract Method",
-		"    → Extracts selected code into a new method",
-		"    → Enter method name when prompted",
-		"",
-		"  Extract Variable",
-		"    → Extracts selected expression to a local variable",
-		"    → Enter variable name when prompted",
-		"",
-		"  Inline Method",
-		"    → Inlines a method at its call sites and removes the method",
-		"    → Works best with simple methods (single return statement)",
-		"",
-		"  Press q or <Esc> to close | j/k to scroll",
-		"",
-	}
+	local popup = Popup({
+		position = "50%",
+		size = {
+			width = 50,
+			height = 10,
+		},
+		border = {
+			style = "rounded",
+			text = {
+				top = "[ Commands ]",
+				top_align = "center",
+			},
+		},
+		win_options = {
+			winhighlight = "Normal:Normal,FloatBorder:Normal",
+		},
+	})
 
-	-- Create a floating window for the help
-	local buf = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, help_text)
+	popup:mount()
 
-	local width = 70
-	local height = 20
+	-- Focus the popup window
+	vim.api.nvim_set_current_win(popup.winid)
 
-	local opts = {
-		relative = "editor",
-		width = width,
-		height = height,
-		row = math.floor((vim.o.lines - height) / 2),
-		col = math.floor((vim.o.columns - width) / 2),
-		style = "minimal",
-		border = "rounded",
-	}
+	-- Set buffer lines after mounting
+	local buf = popup.bufnr
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+		"  Generate Getters/Setters          <leader>gg",
+		"  Generate toString                 <leader>gt",
+		"  Extract Method                    <leader>er",
+		"  Extract Variable                  <leader>ev",
+		"  Inline Method                     <leader>im",
+		"  Menu                              <leader>jf",
+		"",
+		"  :RefactorHelp  :RefactorMenu",
+		"",
+		"  q or esc to exit",
+	})
 
-	local win = vim.api.nvim_open_win(buf, true, opts)
+	popup:map("n", "q", function()
+		popup:unmount()
+	end)
 
-	-- Enable scrolling
-	vim.wo[win].scrolloff = 999
-	vim.wo[win].wrap = false
-
-	-- Set buffer options
-	vim.bo[buf].modifiable = false
-	vim.bo[buf].readonly = true
-	vim.bo[buf].filetype = "markdown"
-
-	-- Close on escape or q
-	vim.keymap.set('n', 'q', function()
-		vim.api.nvim_win_close(win, true)
-	end, { buffer = buf, nowait = true })
-
-	vim.keymap.set('n', '<Esc>', function()
-		vim.api.nvim_win_close(win, true)
-	end, { buffer = buf, nowait = true })
-
-	-- Scroll up/down
-	local total_lines = #help_text
-	vim.keymap.set('n', 'j', function()
-		local cursor = vim.api.nvim_win_get_cursor(win)
-		if cursor[1] < total_lines then
-			vim.api.nvim_win_set_cursor(win, { cursor[1] + 1, cursor[2] })
-		end
-	end, { buffer = buf, nowait = true })
-
-	vim.keymap.set('n', 'k', function()
-		local cursor = vim.api.nvim_win_get_cursor(win)
-		if cursor[1] > 1 then
-			vim.api.nvim_win_set_cursor(win, { cursor[1] - 1, cursor[2] })
-		end
-	end, { buffer = buf, nowait = true })
+	popup:map("n", "<Esc>", function()
+		popup:unmount()
+	end)
 end
 
 return M
