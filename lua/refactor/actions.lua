@@ -11,7 +11,19 @@ local state = {
 	cursor_autocmd = nil,
 }
 
+local function is_java_file()
+	local buf = vim.api.nvim_get_current_buf()
+	local filetype = vim.bo[buf].filetype
+	if filetype ~= "java" then
+		vim.notify("Not a Java file", vim.log.levels.WARN)
+		return false
+	end
+	return true
+end
+
 function M.generate_getters_setters()
+	if not is_java_file() then return end
+	
 	local buf = vim.api.nvim_get_current_buf()
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 
@@ -138,6 +150,8 @@ function M.show_field_selection_menu(fields)
 end
 
 function M.extract_method()
+	if not is_java_file() then return end
+	
 	-- Check if there's a visual selection
 	local mode = vim.fn.mode()
 	if not mode:match('v') then
@@ -198,6 +212,8 @@ function M.extract_method()
 end
 
 function M.inline_method()
+	if not is_java_file() then return end
+	
 	local buf = vim.api.nvim_get_current_buf()
 	local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
@@ -211,6 +227,8 @@ function M.inline_method()
 end
 
 function M.generate_to_string()
+	if not is_java_file() then return end
+	
 	local buf = vim.api.nvim_get_current_buf()
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 	local source = table.concat(lines, "\n")
@@ -222,6 +240,8 @@ function M.generate_to_string()
 end
 
 function M.extract_variable()
+	if not is_java_file() then return end
+	
 	-- Check if there's a visual selection
 	local mode = vim.fn.mode()
 	if not mode:match('v') then

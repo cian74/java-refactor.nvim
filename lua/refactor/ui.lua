@@ -5,7 +5,19 @@ local backend = require("refactor.backend")
 
 local M = {}
 
+local function is_java_file()
+	local buf = vim.api.nvim_get_current_buf()
+	local filetype = vim.bo[buf].filetype
+	if filetype ~= "java" then
+		vim.notify("Not a Java file", vim.log.levels.WARN)
+		return false
+	end
+	return true
+end
+
 function M.show_menu()
+	if not is_java_file() then return end
+	
 	-- Ensure backend is running before showing menu
 	backend.start_backend()
 
