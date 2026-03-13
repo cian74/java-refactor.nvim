@@ -15,8 +15,6 @@ add shortcut copy and paste for each refactor bind on README
 idea similar to 99 search
 - have an ai search throught the project given the stack trace errors as context, or general runtime errors
 
-help menu / command?
-
 exception flow visualiser 
 
 
@@ -34,11 +32,7 @@ add all other refactor features
 
 accept changes for big refactors
 
-tests for current features
-integration tests
-
 program flow chart
 
-feature that blocks plugin usage on non java projects / files
 
 

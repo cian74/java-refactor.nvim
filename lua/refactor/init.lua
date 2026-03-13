@@ -43,6 +43,11 @@ end, { desc = 'Inline Method' })
 vim.api.nvim_set_keymap('v', '<leader>ev', "<cmd>lua require('refactor.actions').extract_variable()<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<leader>er', "<cmd>lua require('refactor.actions').extract_method()<cr>", { noremap = true, silent = true })
 
+vim.keymap.set('n', '<leader>pf', function()
+	local actions = require("refactor.actions")
+	actions.flame_graph()
+end, { desc = 'Flame Graph' })
+
 --vim.notify("java-refactor plugin loaded!", vim.log.levels.INFO)
 
 --not needed 

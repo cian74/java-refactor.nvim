@@ -286,5 +286,22 @@ function M.extract_variable()
 	})
 end
 
+function M.flame_graph()
+	if not is_java_file() then return end
+	
+	local buf = vim.api.nvim_get_current_buf()
+	local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	local source = table.concat(lines, "\n")
+	
+	vim.notify("Starting profiler... (may take a few seconds)", vim.log.levels.INFO)
+	
+	backend.send_request({
+		command = "profile_method",
+		source = source,
+		start_line = cursor_line,
+	})
+end
+
 return M
 

@@ -1,5 +1,6 @@
 local Menu = require("nui.menu")
 local Popup = require("nui.popup")
+local Split = require("nui.split")
 local actions = require("refactor.actions")
 local backend = require("refactor.backend")
 
@@ -44,6 +45,7 @@ function M.show_menu()
 			Menu.item("Extract Method"),
 			Menu.item("Extract Variable"),
 			Menu.item("Inline Method"),
+			Menu.item("Flame Graph"),
 			-- Menu.item("Generate Constructor"),
 		},
 		max_width = 30,
@@ -68,6 +70,8 @@ function M.show_menu()
 				actions.inline_method()
 			elseif item.text == "Extract Variable" then
 				actions.extract_variable()
+			elseif item.text == "Flame Graph" then
+				actions.flame_graph()
 			end
 		end,
 	})
@@ -107,6 +111,7 @@ function M.show_help()
 		"  Extract Method                    <leader>er",
 		"  Extract Variable                  <leader>ev",
 		"  Inline Method                     <leader>im",
+		"  Flame Graph                       <leader>pf",
 		"  Menu                              <leader>jf",
 		"",
 		"  :RefactorHelp  :RefactorMenu",
@@ -121,6 +126,51 @@ function M.show_help()
 	popup:map("n", "<Esc>", function()
 		popup:unmount()
 	end)
+end
+
+local flame_split = nil
+
+function M.show_flame_graph(flame_data)
+	if flame_split and flame_split:is_mounted() then
+		flame_split:unmount()
+	end
+	
+	flame_split = Split({
+		orient = "left",
+		size = 45,
+		border = {
+			style = "rounded",
+			text = {
+				top = " 🔥 Flame Graph ",
+				top_align = "center",
+			},
+		},
+		win_options = {
+			winhighlight = "Normal:Normal,FloatBorder:Normal",
+			wrap = false,
+		},
+	})
+	
+	flame_split:mount()
+	
+	vim.api.nvim_set_current_win(flame_split.winid)
+	
+	local lines = vim.split(flame_data, "\n")
+	vim.api.nvim_buf_set_lines(flame_split.bufnr, 0, -1, false, lines)
+	
+	vim.bo[flame_split.bufnr].modifiable = false
+	vim.bo[flame_split.bufnr].readonly = true
+	vim.bo[flame_split.bufnr].filetype = "diff"
+	
+	flame_split:map("n", "q", function()
+		flame_split:unmount()
+		flame_split = nil
+	end, { nowait = true })
+	
+	flame_split:map("n", "<Esc>", function()
+		flame_split:unmount()
+		flame_split = nil
+	end, { nowait = true })
 end
 
 return M

@@ -12,6 +12,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.google.gson.Gson;
+import com.cian.refactor.profiler.Profiler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,6 +53,15 @@ public class RefactoringEngine {
 				break;
 			case("extract_variable"):
 				result = extractVariable(request);
+				break;
+			case("profile_method"):
+				Profiler profiler = new Profiler();
+				result = profiler.profileMethod(
+					request.source,
+					request.class_name,
+					request.method_name,
+					request.start_line
+				);
 				break;
 
 		}

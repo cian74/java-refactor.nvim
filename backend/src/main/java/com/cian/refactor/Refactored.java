@@ -5,4 +5,5 @@ public class Refactored {
     public String new_source;
     public String error;
     public java.util.List<String> fields;
+    public String flame_graph;
 }

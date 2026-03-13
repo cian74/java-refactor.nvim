@@ -15,4 +15,7 @@ public class Request {
 
 	//getter setters
 	java.util.List<String> selected_fields;
+	
+	//fields for profile_method
+	String class_name;
 }
