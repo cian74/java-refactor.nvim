@@ -3,7 +3,9 @@ package com.cian.refactor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import java.util.Arrays;
 import java.util.List;
 import java.text.DecimalFormat;
@@ -20,13 +22,28 @@ public class RefactoringEnginePerformanceTest {
     private RefactoringEngine engine;
     private Request request;
     private DecimalFormat df = new DecimalFormat("#.##");
-    private List<String> performanceMetrics = new ArrayList<>();
+    private static List<String> performanceMetrics = new ArrayList<>();
+    
+    @BeforeAll
+    static void warmUp() {
+        RefactoringEngine engine = new RefactoringEngine();
+        Request req = new Request();
+        req.source = "public class T { private String x; private int y; private boolean z; }";
+        
+        for (int i = 0; i < 10; i++) {
+            engine.applyRefactor("generate_getters_setters", req);
+            engine.applyRefactor("list_fields", req);
+            engine.applyRefactor("generate_toString", req);
+            engine.applyRefactor("extract_variable", req);
+        }
+        
+        performanceMetrics.clear();
+    }
     
     @BeforeEach
     void setUp() {
         engine = new RefactoringEngine();
         request = new Request();
-        performanceMetrics.clear();
     }
     
     @AfterEach
@@ -38,13 +55,16 @@ public class RefactoringEnginePerformanceTest {
             System.out.println(metric);
         }
         System.out.println("=".repeat(80) + "\n");
-        
+    }
+    
+    @AfterAll
+    static void saveResults() {
         saveToFile();
     }
     
-    private void saveToFile() {
+    private static void saveToFile() {
         String filename = "performance-report.txt";
-        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename, false))) {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             out.println("=".repeat(80));
             out.println("Run: " + timestamp);
