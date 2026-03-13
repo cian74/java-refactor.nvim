@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +38,24 @@ public class RefactoringEnginePerformanceTest {
             System.out.println(metric);
         }
         System.out.println("=".repeat(80) + "\n");
+        
+        saveToFile();
+    }
+    
+    private void saveToFile() {
+        String filename = "performance-report.txt";
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            out.println("=".repeat(80));
+            out.println("Run: " + timestamp);
+            out.println("=".repeat(80));
+            for (String metric : performanceMetrics) {
+                out.println(metric);
+            }
+            out.println();
+        } catch (Exception e) {
+            System.err.println("Failed to save performance report: " + e.getMessage());
+        }
     }
     
     private void recordMetric(String testName, long durationMs, String details) {
@@ -67,7 +89,7 @@ public class RefactoringEnginePerformanceTest {
         
         recordMetric("Generate Getters/Setters (Small)", durationMs, 
             String.format("%d fields → %d methods, %.1f ops/sec", 
-                fieldCount, fieldCount * 6, operationsPerSecond));
+                fieldCount, fieldCount * 2, operationsPerSecond));
         
         assertNotNull(result);
         assertTrue(durationMs < 1000, "Operation should complete in less than 1 second");
@@ -492,5 +514,103 @@ public class RefactoringEnginePerformanceTest {
         
         assertNotNull(result);
         assertTrue(result.contains("error"), "Should return error when toString already exists");
+    }
+    
+    @Test
+    @DisplayName("Performance test for extract_variable operation")
+    void testExtractVariablePerformance() {
+        String classWithMethod = """
+            public class TestClass {
+                public void stringOp() {
+                    if (name.toLowerCase().equals("Bob")) {
+                        System.out.println("Name is bob");
+                    }
+                }
+            }
+            """;
+        
+        request.source = classWithMethod;
+        request.highlighted = "name.toLowerCase()";
+        request.var_name = "lowerName";
+        request.start_line = 3;
+        
+        int sourceSize = classWithMethod.length();
+        
+        long startTime = System.nanoTime();
+        String result = engine.applyRefactor("extract_variable", request);
+        long endTime = System.nanoTime();
+        
+        long durationMs = (endTime - startTime) / 1_000_000;
+        int resultSize = result != null ? result.length() : 0;
+        
+        recordMetric("Extract Variable", durationMs, 
+            String.format("Extracted expression (%d→%d chars)", 
+                sourceSize, resultSize));
+        
+        assertNotNull(result);
+        assertTrue(durationMs < 1000, "Extract variable should complete in less than 1 second");
+    }
+    
+    @Test
+    @DisplayName("Comprehensive performance benchmark - all operations")
+    void testAllOperationsPerformance() {
+        String testClass = """
+            public class PerformanceTest {
+                private String name;
+                private int age;
+                private boolean active;
+                private double salary;
+                
+                public int calculate(int a, int b) {
+                    return a + b;
+                }
+                
+                public void process() {
+                    int result = calculate(5, 10);
+                    System.out.println(result);
+                }
+            }
+            """;
+        
+        // Test each operation and record timing
+        int iterations = 10;
+        
+        // Generate getters/setters
+        long totalGetters = 0;
+        for (int i = 0; i < iterations; i++) {
+            request.source = testClass;
+            long start = System.nanoTime();
+            engine.applyRefactor("generate_getters_setters", request);
+            totalGetters += System.nanoTime() - start;
+        }
+        long avgGettersMs = (totalGetters / iterations) / 1_000_000;
+        
+        // List fields
+        long totalList = 0;
+        for (int i = 0; i < iterations; i++) {
+            request.source = testClass;
+            long start = System.nanoTime();
+            engine.applyRefactor("list_fields", request);
+            totalList += System.nanoTime() - start;
+        }
+        long avgListMs = (totalList / iterations) / 1_000_000;
+        
+        // Generate toString
+        long totalToString = 0;
+        for (int i = 0; i < iterations; i++) {
+            request.source = testClass;
+            long start = System.nanoTime();
+            engine.applyRefactor("generate_toString", request);
+            totalToString += System.nanoTime() - start;
+        }
+        long avgToStringMs = (totalToString / iterations) / 1_000_000;
+        
+        recordMetric("Benchmark Summary (avg of 10)", 0, 
+            String.format("Getters: %dms | ListFields: %dms | toString: %dms", 
+                avgGettersMs, avgListMs, avgToStringMs));
+        
+        assertTrue(avgGettersMs < 50, "Getters/setters should be fast");
+        assertTrue(avgListMs < 50, "List fields should be fast");
+        assertTrue(avgToStringMs < 50, "toString should be fast");
     }
 }
