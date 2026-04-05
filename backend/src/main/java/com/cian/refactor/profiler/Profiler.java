@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Profiler {
     
@@ -185,12 +186,23 @@ public class Profiler {
     }
     
     private String runWithClasspath(String classpath, String mainClass) throws Exception {
-        String collapsedFile = "/tmp/profile-" + System.currentTimeMillis() + ".txt";
+        String profileFile = "/tmp/profile-" + System.currentTimeMillis() + ".txt";
         
-        // Run Java with profiler agent
+        // Warmup run to trigger JIT compilation
+        ProcessBuilder warmupPb = new ProcessBuilder("java", "-cp", classpath, mainClass);
+        warmupPb.directory(new File("."));
+        warmupPb.redirectErrorStream(true);
+        Process warmupProc = warmupPb.start();
+        try {
+            warmupProc.waitFor();
+        } catch (InterruptedException e) {
+            warmupProc.destroy();
+        }
+        
+        // Run with profiler
         List<String> cmd = new ArrayList<>();
         cmd.add("java");
-        cmd.add("-agentpath:" + PROFILER_LIB + "=start,event=cpu,file=" + collapsedFile + ",interval=1ms");
+        cmd.add("-agentpath:" + PROFILER_LIB + "=start,event=cpu,file=" + profileFile + ",interval=100us");
         cmd.add("-cp");
         cmd.add(classpath);
         cmd.add(mainClass);
@@ -207,93 +219,16 @@ public class Profiler {
             proc.destroy();
         }
         
-        if (new File(collapsedFile).exists()) {
-            String content = Files.readString(Path.of(collapsedFile));
-            Files.deleteIfExists(Path.of(collapsedFile));
-            return formatFlameGraph(content);
+        if (new File(profileFile).exists()) {
+            String content = Files.readString(Path.of(profileFile));
+            Files.deleteIfExists(Path.of(profileFile));
+            return formatProfilerOutput(content);
         }
         
-        return "No profiling data captured.";
+        return "No profiling data captured";
     }
     
-    private String profileSimpleFile(String source, String classFileName) throws Exception {
-        String tempDir = System.getProperty("java.io.tmpdir") + "/java-refactor-profiler";
-        new File(tempDir).mkdirs();
-        
-        String sourceFile = tempDir + "/" + classFileName + ".java";
-        Files.writeString(Path.of(sourceFile), source);
-        
-        // Compile
-        String classpath = System.getProperty("java.class.path");
-        ProcessBuilder pb = new ProcessBuilder("javac", "-cp", classpath, "-d", tempDir, sourceFile);
-        pb.inheritIO();
-        Process p = pb.start();
-        if (p.waitFor() != 0) {
-            throw new RuntimeException("Compilation failed");
-        }
-        
-        // Run with profiler
-        String collapsedFile = tempDir + "/collapsed.txt";
-        
-        ProcessBuilder runBuilder = new ProcessBuilder(
-            "java",
-            "-agentpath:" + PROFILER_LIB + "=start,event=cpu,file=" + collapsedFile + ",interval=1ms",
-            "-cp", tempDir,
-            classFileName
-        );
-        
-        runBuilder.directory(new File(tempDir));
-        runBuilder.redirectErrorStream(true);
-        Process runProc = runBuilder.start();
-        runProc.waitFor();
-        
-        if (new File(collapsedFile).exists()) {
-            String content = Files.readString(Path.of(collapsedFile));
-            cleanup(tempDir, sourceFile);
-            return formatFlameGraph(content);
-        }
-        
-        cleanup(tempDir, sourceFile);
-        return "No profiling data captured.";
-    }
-    
-    private String formatFlameGraph(String rawOutput) {
-        if (rawOutput == null || rawOutput.isEmpty()) {
-            return "No profiling data captured";
-        }
-        
-        String[] lines = rawOutput.split("\n");
-        Map<String, Long> samples = new HashMap<>();
-        long totalSamples = 0;
-        
-        for (String line : lines) {
-            if (line.matches("^\\s*\\d+\\s+\\d+\\.\\d+%\\s+\\d+.*")) {
-                String[] parts = line.trim().split("\\s+");
-                if (parts.length >= 4) {
-                    try {
-                        String method = parts[3];
-                        long count = Long.parseLong(parts[2]);
-                        samples.merge(method, count, Long::sum);
-                    } catch (NumberFormatException e) {}
-                }
-            }
-            if (line.contains(" samples")) {
-                String[] parts = line.split(",");
-                for (String part : parts) {
-                    if (part.trim().endsWith("samples")) {
-                        try {
-                            long count = Long.parseLong(part.trim().replace(" samples", "").replace("(", ""));
-                            totalSamples += count;
-                        } catch (NumberFormatException e) {}
-                    }
-                }
-            }
-        }
-        
-        if (samples.isEmpty()) {
-            return "No profiling data captured";
-        }
-        
+    private String formatAggregatedFlameGraph(Map<String, Long> samples, long totalSamples) {
         List<Map.Entry<String, Long>> sorted = samples.entrySet().stream()
             .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
             .limit(15)
@@ -304,7 +239,7 @@ public class Profiler {
         StringBuilder sb = new StringBuilder();
         sb.append("🔥 Flame Graph\n");
         sb.append("═".repeat(50)).append("\n");
-        sb.append(String.format("Total samples: %d\n", totalSamples > 0 ? totalSamples : maxSamples));
+        sb.append(String.format("Total samples: %d\n", totalSamples));
         
         for (Map.Entry<String, Long> entry : sorted) {
             double percentage = maxSamples > 0 ? (double) entry.getValue() / maxSamples * 100 : 0;
@@ -325,6 +260,218 @@ public class Profiler {
         sb.append("Press q or Esc to close");
         
         return sb.toString();
+    }
+    
+    private String profileSimpleFile(String source, String classFileName) throws Exception {
+        String tempDir = System.getProperty("java.io.tmpdir") + "/java-refactor-profiler";
+        new File(tempDir).mkdirs();
+        
+        String sourceFile = tempDir + "/" + classFileName + ".java";
+        Files.writeString(Path.of(sourceFile), source);
+        
+        // Compile
+        String classpath = System.getProperty("java.class.path");
+        ProcessBuilder pb = new ProcessBuilder("javac", "-cp", classpath, "-d", tempDir, sourceFile);
+        pb.inheritIO();
+        Process p = pb.start();
+        if (p.waitFor() != 0) {
+            throw new RuntimeException("Compilation failed");
+        }
+        
+        // Warmup run to trigger JIT compilation
+        ProcessBuilder warmupPb = new ProcessBuilder("java", "-cp", tempDir, classFileName);
+        warmupPb.directory(new File(tempDir));
+        warmupPb.redirectErrorStream(true);
+        Process warmupProc = warmupPb.start();
+        try {
+            warmupProc.waitFor();
+        } catch (InterruptedException e) {
+            warmupProc.destroy();
+        }
+        
+        // Run with profiler
+        String profileFile = tempDir + "/profile.txt";
+        
+        // Use a simple workload to generate CPU
+        String wrapperClass = tempDir + "/ProfilerRunner.java";
+        String wrapperSource = 
+            "public class ProfilerRunner {\n" +
+            "    public static void main(String[] args) {\n" +
+            "        int sum = 0;\n" +
+            "        for (int i = 0; i < 10000000; i++) {\n" +
+            "            sum += compute(i);\n" +
+            "        }\n" +
+            "        System.out.println(\"Result: \" + sum);\n" +
+            "    }\n" +
+            "    static int compute(int n) {\n" +
+            "        return n * n + 1;\n" +
+            "    }\n" +
+            "}";
+        Files.writeString(Path.of(wrapperClass), wrapperSource);
+        
+        ProcessBuilder compileWrap = new ProcessBuilder("javac", "-cp", tempDir, "-d", tempDir, wrapperClass);
+        compileWrap.directory(new File(tempDir));
+        compileWrap.start().waitFor();
+        
+        ProcessBuilder runBuilder = new ProcessBuilder(
+            "java",
+            "-agentpath:" + PROFILER_LIB + "=start,event=cpu,file=" + profileFile + ",interval=100us",
+            "-cp", tempDir,
+            "ProfilerRunner"
+        );
+        
+        runBuilder.directory(new File(tempDir));
+        runBuilder.redirectErrorStream(true);
+        Process runProc = runBuilder.start();
+        runProc.waitFor();
+        
+        if (new File(profileFile).exists()) {
+            String content = Files.readString(Path.of(profileFile));
+            Files.deleteIfExists(Path.of(profileFile));
+            cleanup(tempDir, sourceFile);
+            return formatProfilerOutput(content);
+        }
+        
+        cleanup(tempDir, sourceFile);
+        return "No profiling data captured";
+    }
+    
+    private String formatProfilerOutput(String content) {
+        if (content == null || content.isEmpty()) {
+            return "No profiling data captured";
+        }
+        
+        Map<String, Long> samples = new HashMap<>();
+        long totalSamples = 0;
+        
+        // Parse the text output format
+        // Example: "--- 2100000 ns (15.67%), 21 samples\n  [ 0] Test.main"
+        java.util.regex.Pattern samplePattern = 
+            java.util.regex.Pattern.compile("---.*?(\\d+)\\s+samples\\s*$", java.util.regex.Pattern.MULTILINE);
+        java.util.regex.Pattern methodPattern = 
+            java.util.regex.Pattern.compile("\\[\\s*\\d+\\]\\s+(\\S+)");
+        
+        String[] lines = content.split("\n");
+        long currentSamples = 0;
+        
+        for (String line : lines) {
+            if (line.contains("samples")) {
+                java.util.regex.Matcher sampleMatcher = samplePattern.matcher(line);
+                if (sampleMatcher.find()) {
+                    try {
+                        currentSamples = Long.parseLong(sampleMatcher.group(1));
+                        totalSamples += currentSamples;
+                    } catch (NumberFormatException e) {}
+                }
+            } else if (line.contains("[") && !line.startsWith("---")) {
+                java.util.regex.Matcher methodMatcher = methodPattern.matcher(line);
+                if (methodMatcher.find()) {
+                    String method = methodMatcher.group(1);
+                    if (!isJvmInternal(method) && method.contains(".")) {
+                        samples.merge(method, currentSamples, Long::sum);
+                    }
+                }
+            } else if (line.startsWith("---")) {
+                currentSamples = 0;
+            }
+        }
+        
+        if (samples.isEmpty()) {
+            return "No profiling data captured";
+        }
+        
+        return formatAggregatedFlameGraph(samples, totalSamples);
+    }
+    
+    private String formatFlameGraph(String rawOutput) {
+        if (rawOutput == null || rawOutput.isEmpty()) {
+            return "No profiling data captured";
+        }
+        
+        // Parse collapsed stack format: "frame1;frame2;frame3 count"
+        String[] lines = rawOutput.split("\n");
+        Map<String, Long> samples = new HashMap<>();
+        long totalSamples = 0;
+        
+        for (String line : lines) {
+            if (line.trim().isEmpty()) continue;
+            
+            int lastSpace = line.lastIndexOf(' ');
+            if (lastSpace > 0) {
+                try {
+                    long count = Long.parseLong(line.substring(lastSpace + 1).trim());
+                    String stack = line.substring(0, lastSpace);
+                    
+                    // Get the topmost user frame (last semicolon-separated frame)
+                    String[] frames = stack.split(";");
+                    String topFrame = frames[frames.length - 1].trim();
+                    
+                    // Skip JVM internal frames
+                    if (!isJvmInternal(topFrame)) {
+                        samples.merge(topFrame, count, Long::sum);
+                        totalSamples += count;
+                    }
+                } catch (NumberFormatException e) {}
+            }
+        }
+        
+        if (samples.isEmpty()) {
+            return "No profiling data captured (only JVM frames found)";
+        }
+        
+        List<Map.Entry<String, Long>> sorted = samples.entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+            .limit(15)
+            .toList();
+        
+        long maxSamples = sorted.get(0).getValue();
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("🔥 Flame Graph\n");
+        sb.append("═".repeat(50)).append("\n");
+        sb.append(String.format("Total samples: %d\n", totalSamples));
+        
+        for (Map.Entry<String, Long> entry : sorted) {
+            double percentage = maxSamples > 0 ? (double) entry.getValue() / maxSamples * 100 : 0;
+            int barLength = (int) (percentage / 5);
+            String bar = "█".repeat(Math.min(barLength, 20));
+            String padding = " ".repeat(Math.max(0, 20 - barLength));
+            
+            String method = entry.getKey();
+            if (method.length() > 35) {
+                method = method.substring(0, 32) + "...";
+            }
+            
+            sb.append(String.format("%-38s %s%s (%.1f%%)\n", 
+                method, bar, padding, percentage));
+        }
+        
+        sb.append("═".repeat(50)).append("\n");
+        sb.append("Press q or Esc to close");
+        
+        return sb.toString();
+    }
+    
+    private boolean isJvmInternal(String frame) {
+        if (frame == null || frame.isEmpty()) return true;
+        if (frame.startsWith("[") || frame.startsWith("__")) return true;
+        if (frame.contains("::") && !frame.contains(".")) return true;
+        
+        String[] jvmPrefixes = {
+            "jdk.", "java.", "javax.", "sun.", "com.sun.",
+            "pthread_", "__psynch", "__kernel", "__proc_",
+            "os_unfair", "pthread_mutex", "bsearch", "_xzm_",
+            "vmSymbols", "ValueRecorder", "JavaThread",
+            "InstanceKlass", "LinearScan", "Assembler::",
+            "LIR_", "FieldInfo", "RelocIter", "HandleMark",
+            "ConstantTable", "MethodCounters", "BytecodeStream",
+            "ResourceHashtable", "ciMethod", "Compile::",
+            "Connection::", "_platform_", "toBytes"
+        };
+        for (String prefix : jvmPrefixes) {
+            if (frame.startsWith(prefix)) return true;
+        }
+        return false;
     }
     
     private void cleanup(String tempDir, String sourceFile) {

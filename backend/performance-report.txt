@@ -1,20 +1,20 @@
 ================================================================================
-Run: 2026-03-13 18:58:15
+Run: 2026-04-02 22:59:00
 ================================================================================
 Inline Method                            |        3 ms | Inlined simple method (212→156 chars)
 Inline Method (Multiple Calls)           |        1 ms | Inlined method with 3 calls (260→206 chars)
 Generate Selected Getters/Setters        |        2 ms | 4 selected fields → 8 methods (128→745 chars)
 Generate Partial Getters/Setters         |        1 ms | 2 selected fields → 4 methods (128→457 chars)
-Generate toString (Small)                |        0 ms | 3 fields (98→344 chars)
-Generate toString (Large)                |        8 ms | 50 fields (1417→4390 chars)
+Generate toString (Small)                |        1 ms | 3 fields (98→344 chars)
+Generate toString (Large)                |        9 ms | 50 fields (1417→4390 chars)
 Generate toString (Duplicate)            |        1 ms | Detected existing toString
 List Fields                              |        2 ms | Parsed 50 fields (1416→502 chars), 25000.0 fields/sec
 Benchmark Summary (avg of 10)            |        0 ms | Getters: 2ms | ListFields: 0ms | toString: 1ms
-Benchmark (100 iterations)               |        1 ms | avg: 1ms, min: 0ms, max: 3ms
-Memory Usage (Large Operation)           |      157 ms | 500 fields, 14416→98776 chars, 0.0 MB memory
+Benchmark (100 iterations)               |        1 ms | avg: 1ms, min: 0ms, max: 4ms
+Memory Usage (Large Operation)           |      146 ms | 500 fields, 14416→98776 chars, 0.0 MB memory
 Extract Method (Expression)              |        4 ms | Extracted 5 chars (175→298 chars total)
-Extract Method (Statement)               |        0 ms | Extracted 25 chars (164→273 chars total)
-Generate Getters/Setters (Large)         |       19 ms | 100 fields (2817→19177 chars), 10526.3 ops/sec
-Generate Getters/Setters (Small)         |        1 ms | 3 fields → 6 methods, 6000.0 ops/sec
+Extract Method (Statement)               |        1 ms | Extracted 25 chars (164→273 chars total)
+Generate Getters/Setters (Large)         |       21 ms | 100 fields (2817→19177 chars), 9523.8 ops/sec
+Generate Getters/Setters (Small)         |        0 ms | 3 fields → 6 methods, Infinity ops/sec
 Extract Variable                         |        2 ms | Extracted expression (167→241 chars)
 
