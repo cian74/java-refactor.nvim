@@ -17,7 +17,7 @@ public class Test {
     public void calculate() {
         int x = 0;
         int y = extractedMethod2();
-        int z = (x + y) * (x + y);
+		int z = (x + y) * (x + y);
     }
 
     public void stringOp() {
