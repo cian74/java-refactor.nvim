@@ -1,6 +1,9 @@
 TODO:
 
-refactor refactoringengine.java
+Remaining refactoring features.
+    -Rename class/method/variable
+    -Encapsulate field
+    -Extract interface
 
 adding remapping feature for refactor.
     -make each one customisable
@@ -20,7 +23,6 @@ exception flow visualiser
 
 FIX
 
-refactor and seperate code.
 make binds customisable
 
 flame graph

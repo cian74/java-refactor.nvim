@@ -17,7 +17,7 @@ public class Test {
     public void calculate() {
         int x = 0;
         int y = extractedMethod2();
-		int z = (x + y) * (x + y);
+        int z = squaringMethod();
     }
 
     public void stringOp() {
@@ -65,6 +65,10 @@ public class Test {
 
     public String toString() {
         return "Test{" + "name2=" + String.valueOf(name2) + ", " + "major=" + String.valueOf(major) + ", " + "age=" + String.valueOf(age) + "}";
+    }
+
+    private int squaringMethod() {
+        return (x + y) * (x + y);
     }
 }
 

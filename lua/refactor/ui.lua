@@ -19,7 +19,6 @@ end
 function M.show_menu()
 	if not is_java_file() then return end
 	
-	-- Ensure backend is running before showing menu
 	backend.start_backend()
 
 	local menu = Menu({
@@ -46,7 +45,8 @@ function M.show_menu()
 			Menu.item("Extract Variable"),
 			Menu.item("Inline Method"),
 			Menu.item("Flame Graph"),
-			-- Menu.item("Generate Constructor"),
+			Menu.separator(),
+			Menu.item("Settings"),
 		},
 		max_width = 30,
 		keymap = {
@@ -56,10 +56,8 @@ function M.show_menu()
 			submit = { "<CR>", "<Space>" },
 		},
 		on_close = function()
-			vim.notify("Menu closed", vim.log.levels.INFO)
 		end,
 		on_submit = function(item)
-			vim.notify("Selected: " .. item.text, vim.log.levels.INFO)
 			if item.text == "Generate Getters and Setters" then
 				actions.generate_getters_setters()
 			elseif item.text == "Generate toString" then
@@ -72,6 +70,8 @@ function M.show_menu()
 				actions.extract_variable()
 			elseif item.text == "Flame Graph" then
 				actions.flame_graph()
+			elseif item.text == "Settings" then
+				require("refactor.settings").show_settings()
 			end
 		end,
 	})
@@ -84,12 +84,12 @@ function M.show_help()
 		position = "50%",
 		size = {
 			width = 50,
-			height = 10,
+			height = 12,
 		},
 		border = {
 			style = "rounded",
 			text = {
-				top = "[ Commands ]",
+				top = "  📖 Keybindings  ",
 				top_align = "center",
 			},
 		},
@@ -100,23 +100,28 @@ function M.show_help()
 
 	popup:mount()
 
-	-- Focus the popup window
 	vim.api.nvim_set_current_win(popup.winid)
 
-	-- Set buffer lines after mounting
+	local function format_key(key)
+		if not key then return "N/A" end
+		return key:gsub("<leader>", "⏺️ ")
+	end
+
 	local buf = popup.bufnr
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-		"  Generate Getters/Setters          <leader>gg",
-		"  Generate toString                 <leader>gt",
-		"  Extract Method                    <leader>er",
-		"  Extract Variable                  <leader>ev",
-		"  Inline Method                     <leader>im",
-		"  Flame Graph                       <leader>pf",
-		"  Menu                              <leader>jf",
+		"  Refactoring Actions:",
 		"",
-		"  :RefactorHelp  :RefactorMenu",
+		"  Generate Getters/Setters  " .. format_key(config.get_keybinding("generate_getters_setters")),
+		"  Generate toString         " .. format_key(config.get_keybinding("generate_to_string")),
+		"  Extract Method           " .. format_key(config.get_keybinding("extract_method")),
+		"  Extract Variable         " .. format_key(config.get_keybinding("extract_variable")),
+		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
+		"  Flame Graph              " .. format_key(config.get_keybinding("flame_graph")),
+		"  Menu                     " .. format_key(config.get_keybinding("menu")),
 		"",
-		"  q or esc to exit",
+		"  Commands: :RefactorHelp :RefactorMenu :RefactorSettings",
+		"",
+		"  Press q or Esc to close",
 	})
 
 	popup:map("n", "q", function()

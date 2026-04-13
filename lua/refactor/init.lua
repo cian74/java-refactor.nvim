@@ -1,9 +1,54 @@
 local backend = require("refactor.backend")
 local ui = require("refactor.ui")
+local config = require("refactor.config")
+local settings = require("refactor.settings")
 
 local M = {}
 
--- ui funcs
+function M.setup(user_config)
+	config.setup(user_config)
+	M.setup_keymaps()
+end
+
+function M.setup_keymaps()
+	vim.keymap.set("n", config.get_keybinding("menu"), function()
+		ui.show_menu()
+	end, { desc = "Java Refactor Menu" })
+
+	vim.keymap.set("n", config.get_keybinding("generate_getters_setters"), function()
+		local actions = require("refactor.actions")
+		actions.generate_getters_setters()
+	end, { desc = "Generate Getters/Setters" })
+
+	vim.keymap.set("n", config.get_keybinding("generate_to_string"), function()
+		local actions = require("refactor.actions")
+		actions.generate_to_string()
+	end, { desc = "Generate toString" })
+
+	vim.keymap.set("n", config.get_keybinding("inline_method"), function()
+		local actions = require("refactor.actions")
+		actions.inline_method()
+	end, { desc = "Inline Method" })
+
+	vim.keymap.set("v", config.get_keybinding("extract_variable"), function()
+		local actions = require("refactor.actions")
+		actions.extract_variable()
+	end, { desc = "Extract Variable" })
+
+	vim.keymap.set("v", config.get_keybinding("extract_method"), function()
+		local actions = require("refactor.actions")
+		actions.extract_method()
+	end, { desc = "Extract Method" })
+
+	vim.keymap.set("n", config.get_keybinding("flame_graph"), function()
+		local actions = require("refactor.actions")
+		actions.flame_graph()
+	end, { desc = "Flame Graph" })
+
+	vim.keymap.set("n", config.get_keybinding("settings"), function()
+		settings.show_settings()
+	end, { desc = "Refactor Settings" })
+end
 
 function M.start_backend()
 	backend.start_backend()
@@ -17,44 +62,14 @@ function M.help()
 	ui.show_help()
 end
 
--- Refactor Commands
+function M.settings()
+	settings.show_settings()
+end
 
-vim.keymap.set('n', '<leader>jf', function()
-	ui.show_menu()
-end, { desc = 'Java Refactor Menu' })
-
--- Quick motions for common refactoring
-
-vim.keymap.set('n', '<leader>gg', function()
-	local actions = require("refactor.actions")
-	actions.generate_getters_setters()
-end, { desc = 'Generate Getters/Setters' })
-
-vim.keymap.set('n', '<leader>gt', function()
-	local actions = require("refactor.actions")
-	actions.generate_to_string()
-end, { desc = 'Generate toString' })
-
-vim.keymap.set('n', '<leader>im', function()
-	local actions = require("refactor.actions")
-	actions.inline_method()
-end, { desc = 'Inline Method' })
-
-vim.api.nvim_set_keymap('v', '<leader>ev', "<cmd>lua require('refactor.actions').extract_variable()<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<leader>er', "<cmd>lua require('refactor.actions').extract_method()<cr>", { noremap = true, silent = true })
-
-vim.keymap.set('n', '<leader>pf', function()
-	local actions = require("refactor.actions")
-	actions.flame_graph()
-end, { desc = 'Flame Graph' })
-
---vim.notify("java-refactor plugin loaded!", vim.log.levels.INFO)
-
---not needed 
---vim.api.nvim_create_user_command("RefactorStart", M.start_backend, {})
-
---user commands
 vim.api.nvim_create_user_command("RefactorMenu", M.menu, {})
 vim.api.nvim_create_user_command("RefactorHelp", M.help, {})
+vim.api.nvim_create_user_command("RefactorSettings", M.settings, {})
+
+M.setup()
 
 return M
