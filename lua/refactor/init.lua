@@ -5,12 +5,22 @@ local settings = require("refactor.settings")
 
 local M = {}
 
+local function clear_keymaps()
+	local keymap_opts = { buffer = 0 }
+	for _, action in pairs(config.defaults.keybindings) do
+		pcall(vim.keymap.del, "n", action)
+		pcall(vim.keymap.del, "v", action)
+	end
+end
+
 function M.setup(user_config)
 	config.setup(user_config)
 	M.setup_keymaps()
 end
 
 function M.setup_keymaps()
+	clear_keymaps()
+
 	vim.keymap.set("n", config.get_keybinding("menu"), function()
 		ui.show_menu()
 	end, { desc = "Java Refactor Menu" })

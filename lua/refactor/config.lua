@@ -1,5 +1,8 @@
 local M = {}
 
+local config_dir = vim.fn.stdpath("data") .. "/refactor/"
+local config_file = config_dir .. "config.json"
+
 M.defaults = {
 	keybindings = {
 		menu = "<leader>jf",
@@ -26,7 +29,35 @@ M.refactoring_labels = {
 	settings = "Open Settings",
 }
 
+function M.save_config()
+	vim.fn.mkdir(config_dir, "p")
+	local file = io.open(config_file, "w")
+	if file then
+		local json = vim.fn.json_encode({ keybindings = M.config.keybindings })
+		file:write(json)
+		file:close()
+	end
+end
+
+function M.load_config()
+	local file = io.open(config_file, "r")
+	if file then
+		local content = file:read("*all")
+		file:close()
+		local ok, data = pcall(vim.fn.json_decode, content)
+		if ok and data and data.keybindings then
+			for k, v in pairs(data.keybindings) do
+				if M.defaults.keybindings[k] then
+					M.config.keybindings[k] = v
+				end
+			end
+		end
+	end
+end
+
 function M.setup(user_config)
+	M.load_config()
+	
 	user_config = user_config or {}
 	
 	if user_config.keybindings then
@@ -44,6 +75,7 @@ end
 
 function M.set_keybinding(action, keybinding)
 	M.config.keybindings[action] = keybinding
+	M.save_config()
 end
 
 function M.get_all_keybindings()
@@ -52,6 +84,7 @@ end
 
 function M.reset_to_defaults()
 	M.config = vim.deepcopy(M.defaults)
+	M.save_config()
 end
 
 return M
