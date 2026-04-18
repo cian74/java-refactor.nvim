@@ -8,6 +8,7 @@ com/cian/refactor/strategy/GenerateFieldGettersSettersStrategy.class
 com/cian/refactor/Tester.class
 com/cian/refactor/strategy/RenameStrategy.class
 com/cian/refactor/Refactored.class
+com/cian/refactor/strategy/EncapsulateFieldStrategy.class
 com/cian/refactor/strategy/AbstractRefactoringStrategy.class
 com/cian/refactor/Response.class
 com/cian/refactor/Request.class

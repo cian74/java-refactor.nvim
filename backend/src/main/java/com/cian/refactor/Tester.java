@@ -4,9 +4,9 @@ public class Tester {
 
     String namer = "Bob";
 
-    private String name2;
+    String name2;
 
-	private String richard;
+    private String richard;
 
     private String major;
 
@@ -67,6 +67,14 @@ public class Tester {
 
     public String toString() {
         return "Test{" + "name2=" + String.valueOf(name2) + ", " + "major=" + String.valueOf(major) + ", " + "age=" + String.valueOf(age) + "}";
+    }
+
+    public String getRichard() {
+        return richard;
+    }
+
+    public void setRichard(String richard) {
+        this.richard = richard;
     }
 }
 

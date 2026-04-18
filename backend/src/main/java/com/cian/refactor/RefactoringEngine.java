@@ -76,6 +76,13 @@ public class RefactoringEngine {
                 );
                 break;
                 
+            case "encapsulate_field":
+                result = strategy.apply(
+                    request.source,
+                    request.field_name
+                );
+                break;
+                
             case "generate_getters_setters":
             case "list_fields":
             case "generate_toString":

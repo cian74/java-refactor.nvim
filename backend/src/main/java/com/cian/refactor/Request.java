@@ -23,4 +23,7 @@ public class Request {
 	String old_name;
 	String new_name;
 	String scope;
+	
+	//fields for encapsulate_field
+	String field_name;
 }

@@ -272,6 +272,74 @@ class IntegrationTest {
     }
 
     @Test
+    void testEncapsulateFieldPublic() throws Exception {
+        String source = "public class Example {\n" +
+                "    String myField;\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"encapsulate_field\",\"source\":\"%s\",\"field_name\":\"myField\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("private"), 
+                "Should make field private");
+        assertTrue(unescaped.contains("getMyField"), 
+                "Should contain getter");
+        assertTrue(unescaped.contains("setMyField"), 
+                "Should contain setter");
+    }
+
+    @Test
+    void testEncapsulateFieldPrivate() throws Exception {
+        String source = "public class Example {\n" +
+                "    private String name;\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"encapsulate_field\",\"source\":\"%s\",\"field_name\":\"name\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("getName"), 
+                "Should contain getter for already private field");
+        assertTrue(unescaped.contains("setName"), 
+                "Should contain setter for already private field");
+    }
+
+    @Test
+    void testEncapsulateFieldNotFound() throws Exception {
+        String source = "public class Example {\n" +
+                "    String name;\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"encapsulate_field\",\"source\":\"%s\",\"field_name\":\"nonexistent\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        assertTrue(unescaped.contains("error") && unescaped.contains("not found"), 
+                "Should return error for non-existent field");
+    }
+
+    @Test
     void testGenerateFieldGettersSetters() throws Exception {
         String request = "{\"command\":\"generate_field_getters_setters\",\"source\":\"public class Person { private String name; }\",\"selected_fields\":[\"name\"]}\n";
         

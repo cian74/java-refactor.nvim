@@ -17,6 +17,7 @@ public class RefactoringStrategyFactory {
         strategies.put("generate_toString", new GenerateToStringStrategy());
         strategies.put("extract_variable", new ExtractVariableStrategy());
         strategies.put("rename", new RenameStrategy());
+        strategies.put("encapsulate_field", new EncapsulateFieldStrategy());
     }
     
     public static Optional<RefactoringStrategy> getStrategy(String command) {
