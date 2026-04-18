@@ -5,9 +5,10 @@ com/cian/refactor/strategy/RefactoringStrategyFactory.class
 com/cian/refactor/Runner.class
 com/cian/refactor/strategy/InlineMethodStrategy.class
 com/cian/refactor/strategy/GenerateFieldGettersSettersStrategy.class
+com/cian/refactor/Tester.class
+com/cian/refactor/strategy/RenameStrategy.class
 com/cian/refactor/Refactored.class
 com/cian/refactor/strategy/AbstractRefactoringStrategy.class
-com/cian/refactor/Test.class
 com/cian/refactor/Response.class
 com/cian/refactor/Request.class
 com/cian/refactor/strategy/ExtractMethodStrategy.class

@@ -66,6 +66,16 @@ public class RefactoringEngine {
                 );
                 break;
                 
+            case "rename":
+                result = strategy.apply(
+                    request.source,
+                    request.old_name,
+                    request.new_name,
+                    request.start_line,
+                    request.scope
+                );
+                break;
+                
             case "generate_getters_setters":
             case "list_fields":
             case "generate_toString":

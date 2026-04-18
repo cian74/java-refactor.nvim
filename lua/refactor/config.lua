@@ -11,6 +11,7 @@ M.defaults = {
 		extract_method = "<leader>er",
 		extract_variable = "<leader>ev",
 		inline_method = "<leader>im",
+		rename = "<leader>rn",
 		flame_graph = "<leader>pf",
 		settings = "<leader>jr",
 	},
@@ -25,6 +26,7 @@ M.refactoring_labels = {
 	extract_method = "Extract Method",
 	extract_variable = "Extract Variable",
 	inline_method = "Inline Method",
+	rename = "Rename",
 	flame_graph = "Flame Graph",
 	settings = "Open Settings",
 }

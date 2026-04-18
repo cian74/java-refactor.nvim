@@ -1,10 +1,12 @@
 package com.cian.refactor;
 
-public class Test {
+public class Tester {
 
-    String name = "Bob";
+    String namer = "Bob";
 
     private String name2;
+
+	private String richard;
 
     private String major;
 
@@ -17,22 +19,22 @@ public class Test {
     public void calculate() {
         int x = 0;
         int y = extractedMethod2();
-        int z = squaringMethod();
+        int z = (x + y) * (x + y);
     }
 
     public void stringOp() {
-        String lowerName = name.toLowerCase();
+        String lowerName = namer.toLowerCase();
         if (lowerName.equals("Bob")) {
             System.out.println("Name is bob");
         }
     }
 
-    public String getName() {
-        return name;
+    public String getNamer() {
+        return namer;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNamer(String name) {
+        this.namer = name;
     }
 
     public int getAge() {
@@ -65,10 +67,6 @@ public class Test {
 
     public String toString() {
         return "Test{" + "name2=" + String.valueOf(name2) + ", " + "major=" + String.valueOf(major) + ", " + "age=" + String.valueOf(age) + "}";
-    }
-
-    private int squaringMethod() {
-        return (x + y) * (x + y);
     }
 }
 

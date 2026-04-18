@@ -175,6 +175,103 @@ class IntegrationTest {
     }
 
     @Test
+    void testRenameVariable() throws Exception {
+        String source = "public class Example {\n" +
+                "    public void test() {\n" +
+                "        int oldName = 10;\n" +
+                "        System.out.println(oldName);\n" +
+                "    }\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"rename\",\"source\":\"%s\",\"old_name\":\"oldName\",\"new_name\":\"newName\",\"start_line\":3,\"scope\":\"variable\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("newName"), 
+                "Should contain new variable name");
+    }
+
+    @Test
+    void testRenameMethod() throws Exception {
+        String source = "public class Example {\n" +
+                "    public int oldMethod(int x) {\n" +
+                "        return x;\n" +
+                "    }\n" +
+                "    \n" +
+                "    public void test() {\n" +
+                "        int r = oldMethod(5);\n" +
+                "    }\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"rename\",\"source\":\"%s\",\"old_name\":\"oldMethod\",\"new_name\":\"newMethod\",\"start_line\":1,\"scope\":\"method\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("newMethod"), 
+                "Should contain new method name");
+    }
+
+    @Test
+    void testRenameClass() throws Exception {
+        String source = "public class OldClass {\n" +
+                "    public int x;\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"rename\",\"source\":\"%s\",\"old_name\":\"OldClass\",\"new_name\":\"NewClass\",\"start_line\":1,\"scope\":\"class\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("NewClass"), 
+                "Should contain new class name");
+    }
+
+    @Test
+    void testRenameAll() throws Exception {
+        String source = "public class Test {\n" +
+                "    public int data = 5;\n" +
+                "    \n" +
+                "    public void process() {\n" +
+                "        int temp = data;\n" +
+                "    }\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"rename\",\"source\":\"%s\",\"old_name\":\"data\",\"new_name\":\"value\",\"start_line\":3,\"scope\":\"all\"}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("value"), 
+                "Should contain new name");
+    }
+
+    @Test
     void testGenerateFieldGettersSetters() throws Exception {
         String request = "{\"command\":\"generate_field_getters_setters\",\"source\":\"public class Person { private String name; }\",\"selected_fields\":[\"name\"]}\n";
         

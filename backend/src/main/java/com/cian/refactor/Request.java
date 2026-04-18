@@ -18,4 +18,9 @@ public class Request {
 	
 	//fields for profile_method
 	String class_name;
+	
+	//fields for rename
+	String old_name;
+	String new_name;
+	String scope;
 }

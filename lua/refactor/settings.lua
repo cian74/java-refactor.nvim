@@ -13,6 +13,7 @@ local actions_list = {
 	{ key = "extract_method", label = "Extract Method" },
 	{ key = "extract_variable", label = "Extract Variable" },
 	{ key = "inline_method", label = "Inline Method" },
+	{ key = "rename", label = "Rename" },
 	{ key = "flame_graph", label = "Flame Graph" },
 	{ key = "settings", label = "Open Settings" },
 }

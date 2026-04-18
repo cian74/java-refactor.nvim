@@ -55,6 +55,11 @@ function M.setup_keymaps()
 		actions.flame_graph()
 	end, { desc = "Flame Graph" })
 
+	vim.keymap.set("n", config.get_keybinding("rename"), function()
+		local actions = require("refactor.actions")
+		actions.rename()
+	end, { desc = "Rename" })
+
 	vim.keymap.set("n", config.get_keybinding("settings"), function()
 		settings.show_settings()
 	end, { desc = "Refactor Settings" })

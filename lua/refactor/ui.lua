@@ -3,6 +3,7 @@ local Popup = require("nui.popup")
 local Split = require("nui.split")
 local actions = require("refactor.actions")
 local backend = require("refactor.backend")
+local config = require("refactor.config")
 
 local M = {}
 
@@ -44,6 +45,7 @@ function M.show_menu()
 			Menu.item("Extract Method"),
 			Menu.item("Extract Variable"),
 			Menu.item("Inline Method"),
+			Menu.item("Rename"),
 			Menu.item("Flame Graph"),
 			Menu.separator(),
 			Menu.item("Settings"),
@@ -68,6 +70,8 @@ function M.show_menu()
 				actions.inline_method()
 			elseif item.text == "Extract Variable" then
 				actions.extract_variable()
+			elseif item.text == "Rename" then
+				actions.rename()
 			elseif item.text == "Flame Graph" then
 				actions.flame_graph()
 			elseif item.text == "Settings" then
@@ -104,7 +108,7 @@ function M.show_help()
 
 	local function format_key(key)
 		if not key then return "N/A" end
-		return key:gsub("<leader>", "⏺️ ")
+		return key:gsub("<leader>", "<leader>")
 	end
 
 	local buf = popup.bufnr
@@ -116,6 +120,7 @@ function M.show_help()
 		"  Extract Method           " .. format_key(config.get_keybinding("extract_method")),
 		"  Extract Variable         " .. format_key(config.get_keybinding("extract_variable")),
 		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
+		"  Rename                   " .. format_key(config.get_keybinding("rename")),
 		"  Flame Graph              " .. format_key(config.get_keybinding("flame_graph")),
 		"  Menu                     " .. format_key(config.get_keybinding("menu")),
 		"",

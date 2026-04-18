@@ -303,5 +303,52 @@ function M.flame_graph()
 	})
 end
 
+function M.rename()
+	if not is_java_file() then return end
+	
+	local buf = vim.api.nvim_get_current_buf()
+	local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	local source = table.concat(lines, "\n")
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:old_name = input("Old name to rename: ")')
+	vim.cmd('call inputrestore()')
+	local old_name = vim.g.old_name
+	vim.g.old_name = nil
+	
+	if not old_name or old_name == "" then
+		vim.notify("No name provided", vim.log.levels.WARN)
+		return
+	end
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:new_name = input("New name: ")')
+	vim.cmd('call inputrestore()')
+	local new_name = vim.g.new_name
+	vim.g.new_name = nil
+	
+	if not new_name or new_name == "" then
+		vim.notify("No new name provided", vim.log.levels.WARN)
+		return
+	end
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:scope = input("Scope (variable/method/class/field/all) [all]: ")')
+	vim.cmd('call inputrestore()')
+	local scope = vim.g.scope
+	vim.g.scope = nil
+	scope = scope and scope ~= "" and scope or "all"
+	
+	backend.send_request({
+		command = "rename",
+		source = source,
+		old_name = old_name,
+		new_name = new_name,
+		start_line = cursor_line,
+		scope = scope,
+	})
+end
+
 return M
 
