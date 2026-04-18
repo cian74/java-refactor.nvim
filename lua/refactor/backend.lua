@@ -9,7 +9,7 @@ local function get_plugin_root()
 end
 
 local plugin_root = get_plugin_root()
-local jar_path = plugin_root .. "/backend/target/java-refactor-1.0-SNAPSHOT-jar-with-dependencies.jar"
+local jar_path = plugin_root .. "/backend/java-refactor.jar"
 
 M.json_buffer = ""
 

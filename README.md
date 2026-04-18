@@ -1,6 +1,6 @@
 # Installation
 
-Requires Neovim 0.8+
+Requires Neovim 0.8+ and Java 11+
 
 ## Using Lazy
 ```lua
@@ -23,6 +23,16 @@ use {
         require("refactor").setup()
     end,
 }
+```
+
+## Building the Backend (if needed)
+
+The plugin comes with a pre-built JAR. If you need to rebuild:
+
+```bash
+cd backend
+mvn package -DskipTests
+cp target/java-refactor-1.0-SNAPSHOT-jar-with-dependencies.jar java-refactor.jar
 ```
 
 # Configuration

@@ -1,1 +1,3 @@
 *.jar
+!backend/java-refactor.jar
+backend/target/
