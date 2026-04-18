@@ -8,8 +8,10 @@ local function get_plugin_root()
 	return vim.fn.fnamemodify(plugin_root, ":h:h")  -- Go up two levels to plugin root
 end
 
-local plugin_root = get_plugin_root()
-local jar_path = plugin_root .. "/backend/java-refactor.jar"
+local function get_jar_path()
+	local plugin_root = get_plugin_root()
+	return plugin_root .. "/backend/java-refactor.jar"
+end
 
 M.json_buffer = ""
 
@@ -22,10 +24,17 @@ function M.start_backend()
 		return true
 	end
 
+	local jar_path = get_jar_path()
+	
+	vim.notify("JAR path: " .. jar_path, vim.log.levels.WARN)
+	
 	if vim.fn.filereadable(jar_path) == 0 then
-		vim.notify("Backend JAR not found at path: " .. jar_path, vim.log.levels.ERROR)
+		vim.notify("Backend JAR not found: " .. jar_path, vim.log.levels.ERROR)
 		return false
 	end
+	
+	vim.notify("Starting backend with JAR: " .. jar_path, vim.log.levels.WARN)
+	
 	M.job = Job:new({
 		command = "java",
 		args = { "-jar", jar_path },
@@ -37,7 +46,7 @@ function M.start_backend()
 				if not ok then return end
 				M.json_buffer = ""
 
-				if json_msg.fields then 
+if json_msg.fields then 
 					local actions = require("refactor.actions")
 					actions.show_field_selection_menu(json_msg.fields)
 					return
@@ -49,11 +58,37 @@ function M.start_backend()
 					return
 				end
 
-				if json_msg.error then
+				if json_msg.error and not json_msg.new_source then
 					local error_msg = tostring(json_msg.error or "Unknown error")
-					vim.notify("Refactoring error: " .. error_msg, vim.log.levels.ERROR)
+					vim.notify("Refactoring error: " + error_msg, vim.log.levels.ERROR)
 					return
 				end
+				
+				if json_msg.new_source then
+					local lines = vim.split(json_msg.new_source, "\n")
+					if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
+						vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
+					end
+					if json_msg.error then
+						vim.notify(json_msg.error, vim.log.levels.INFO)
+					end
+				end
+
+				if json_msg.flame_graph then
+					local ui = require("refactor.ui")
+					ui.show_flame_graph(json_msg.flame_graph)
+					return
+				end
+
+				if json_msg.error then
+					local error_msg = tostring(json_msg.error or "Unknown error")
+					if json_msg.new_source then
+						vim.notify(error_msg, vim.log.levels.INFO)
+					else
+						vim.notify("Refactoring error: " .. error_msg, vim.log.levels.ERROR)
+					end
+				end
+				
 				if json_msg.new_source then
 					local lines = vim.split(json_msg.new_source, "\n")
 					if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then

@@ -45,6 +45,7 @@ function M.show_menu()
 			Menu.item("Extract Method"),
 			Menu.item("Extract Variable"),
 			Menu.item("Inline Method"),
+			Menu.item("Encapsulate Field"),
 			Menu.item("Rename"),
 			Menu.item("Flame Graph"),
 			Menu.separator(),
@@ -70,6 +71,8 @@ function M.show_menu()
 				actions.inline_method()
 			elseif item.text == "Extract Variable" then
 				actions.extract_variable()
+			elseif item.text == "Encapsulate Field" then
+				actions.encapsulate_field()
 			elseif item.text == "Rename" then
 				actions.rename()
 			elseif item.text == "Flame Graph" then
@@ -120,6 +123,7 @@ function M.show_help()
 		"  Extract Method           " .. format_key(config.get_keybinding("extract_method")),
 		"  Extract Variable         " .. format_key(config.get_keybinding("extract_variable")),
 		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
+		"  Encapsulate Field        " .. format_key(config.get_keybinding("encapsulate_field")),
 		"  Rename                   " .. format_key(config.get_keybinding("rename")),
 		"  Flame Graph              " .. format_key(config.get_keybinding("flame_graph")),
 		"  Menu                     " .. format_key(config.get_keybinding("menu")),

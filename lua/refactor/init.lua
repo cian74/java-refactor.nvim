@@ -40,6 +40,11 @@ function M.setup_keymaps()
 		actions.inline_method()
 	end, { desc = "Inline Method" })
 
+	vim.keymap.set("n", config.get_keybinding("encapsulate_field"), function()
+		local actions = require("refactor.actions")
+		actions.encapsulate_field()
+	end, { desc = "Encapsulate Field" })
+
 	vim.keymap.set("v", config.get_keybinding("extract_variable"), function()
 		local actions = require("refactor.actions")
 		actions.extract_variable()

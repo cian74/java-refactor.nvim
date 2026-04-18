@@ -350,5 +350,30 @@ function M.rename()
 	})
 end
 
+function M.encapsulate_field()
+	if not is_java_file() then return end
+	
+	local buf = vim.api.nvim_get_current_buf()
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	local source = table.concat(lines, "\n")
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:field_name = input("Field name to encapsulate: ")')
+	vim.cmd('call inputrestore()')
+	local field_name = vim.g.field_name
+	vim.g.field_name = nil
+	
+	if not field_name or field_name == "" then
+		vim.notify("No field name provided", vim.log.levels.WARN)
+		return
+	end
+	
+	backend.send_request({
+		command = "encapsulate_field",
+		source = source,
+		field_name = field_name,
+	})
+end
+
 return M
 
