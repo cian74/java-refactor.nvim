@@ -407,4 +407,74 @@ class IntegrationTest {
         String result = output.toString();
         assertFalse(result.isEmpty(), "Should return output for multiple requests");
     }
+
+    @Test
+    void testPullMethod() throws Exception {
+        String source = "public class Parent {}\n" +
+                "\n" +
+                "public class Child extends Parent {\n" +
+                "    public int calculate() {\n" +
+                "        return 42;\n" +
+                "    }\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"pull_push\",\"source\":\"%s\",\"direction\":\"pull\",\"member_name\":\"calculate\",\"start_line\":4}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("new_source"), 
+                "Should have new_source in result");
+    }
+
+    @Test
+    void testPushMethod() throws Exception {
+        String source = "public class Parent {\n" +
+                "    public int calculate() {\n" +
+                "        return 42;\n" +
+                "    }\n" +
+                "}\n" +
+                "\n" +
+                "public class Child extends Parent {}";
+        
+        String request = String.format(
+                "{\"command\":\"pull_push\",\"source\":\"%s\",\"direction\":\"push\",\"member_name\":\"calculate\",\"start_line\":2}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        
+        assertTrue(unescaped.contains("new_source"), 
+                "Should have new_source in result");
+    }
+
+    @Test
+    void testPullPushSingleClass() throws Exception {
+        String source = "public class Single {\n" +
+                "    public int value;\n" +
+                "}";
+        
+        String request = String.format(
+                "{\"command\":\"pull_push\",\"source\":\"%s\",\"direction\":\"pull\",\"member_name\":\"value\",\"start_line\":2}\n",
+                source.replace("\n", "\\n")
+        );
+        
+        String result = sendRequest(request);
+        
+        assertFalse(result.isEmpty(), "Runner returned empty output");
+        
+        String unescaped = result.replace("\\n", "\n").replace("\\r", "");
+        assertTrue(unescaped.contains("error") && unescaped.contains("2 classes"),
+                "Should return error for single class");
+    }
 }
