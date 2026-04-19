@@ -1,12 +1,8 @@
 TODO:
 
 Remaining refactoring features.
-    -Rename class/method/variable
-    -Encapsulate field
     -Extract interface
-
-adding remapping feature for refactor.
-    -make each one customisable
+    -push / pull methods or fields between parent and child classes.
 
 add manual for usage to github README.
     -video for each>?
@@ -20,10 +16,6 @@ idea similar to 99 search
 
 exception flow visualiser 
 
-
-FIX
-
-make binds customisable
 
 flame graph
    - allow the user to create a flame graph for their program in nvim.

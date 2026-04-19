@@ -375,5 +375,44 @@ function M.encapsulate_field()
 	})
 end
 
+function M.pull_push()
+	if not is_java_file() then return end
+	
+	local buf = vim.api.nvim_get_current_buf()
+	local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	local source = table.concat(lines, "\n")
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:direction = input("Pull or push (pull/push): ")')
+	vim.cmd('call inputrestore()')
+	local direction = vim.g.direction
+	vim.g.direction = nil
+	
+	if not direction or direction == "" then
+		vim.notify("No direction provided", vim.log.levels.WARN)
+		return
+	end
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:member_name = input("Method or field name: ")')
+	vim.cmd('call inputrestore()')
+	local member_name = vim.g.member_name
+	vim.g.member_name = nil
+	
+	if not member_name or member_name == "" then
+		vim.notify("No member name provided", vim.log.levels.WARN)
+		return
+	end
+	
+	backend.send_request({
+		command = "pull_push",
+		source = source,
+		direction = direction,
+		member_name = member_name,
+		start_line = cursor_line,
+	})
+end
+
 return M
 

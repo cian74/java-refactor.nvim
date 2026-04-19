@@ -83,6 +83,15 @@ public class RefactoringEngine {
                 );
                 break;
                 
+            case "pull_push":
+                result = strategy.apply(
+                    request.source,
+                    request.direction,
+                    request.member_name,
+                    request.start_line
+                );
+                break;
+                
             case "generate_getters_setters":
             case "list_fields":
             case "generate_toString":

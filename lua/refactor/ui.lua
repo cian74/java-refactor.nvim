@@ -47,6 +47,7 @@ function M.show_menu()
 			Menu.item("Inline Method"),
 			Menu.item("Encapsulate Field"),
 			Menu.item("Rename"),
+			Menu.item("Pull/Push"),
 			Menu.item("Flame Graph"),
 			Menu.separator(),
 			Menu.item("Settings"),
@@ -75,6 +76,8 @@ function M.show_menu()
 				actions.encapsulate_field()
 			elseif item.text == "Rename" then
 				actions.rename()
+			elseif item.text == "Pull/Push" then
+				actions.pull_push()
 			elseif item.text == "Flame Graph" then
 				actions.flame_graph()
 			elseif item.text == "Settings" then
@@ -125,6 +128,7 @@ function M.show_help()
 		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
 		"  Encapsulate Field        " .. format_key(config.get_keybinding("encapsulate_field")),
 		"  Rename                   " .. format_key(config.get_keybinding("rename")),
+		"  Pull/Push                 " .. format_key(config.get_keybinding("pull_push")),
 		"  Flame Graph              " .. format_key(config.get_keybinding("flame_graph")),
 		"  Menu                     " .. format_key(config.get_keybinding("menu")),
 		"",

@@ -17,3 +17,4 @@ com/cian/refactor/RefactoringEngine.class
 com/cian/refactor/strategy/ExtractVariableStrategy.class
 com/cian/refactor/strategy/RefactoringStrategy.class
 com/cian/refactor/profiler/Profiler.class
+com/cian/refactor/strategy/PullPushStrategy.class

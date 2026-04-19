@@ -13,6 +13,7 @@ M.defaults = {
 		inline_method = "<leader>im",
 		encapsulate_field = "<leader>ef",
 		rename = "<leader>rn",
+		pull_push = "<leader>pp",
 		flame_graph = "<leader>pf",
 		settings = "<leader>jr",
 	},
@@ -29,6 +30,7 @@ M.refactoring_labels = {
 	inline_method = "Inline Method",
 	encapsulate_field = "Encapsulate Field",
 	rename = "Rename",
+	pull_push = "Pull/Push",
 	flame_graph = "Flame Graph",
 	settings = "Open Settings",
 }

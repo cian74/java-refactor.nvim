@@ -65,6 +65,11 @@ function M.setup_keymaps()
 		actions.rename()
 	end, { desc = "Rename" })
 
+	vim.keymap.set("n", config.get_keybinding("pull_push"), function()
+		local actions = require("refactor.actions")
+		actions.pull_push()
+	end, { desc = "Pull/Push" })
+
 	vim.keymap.set("n", config.get_keybinding("settings"), function()
 		settings.show_settings()
 	end, { desc = "Refactor Settings" })

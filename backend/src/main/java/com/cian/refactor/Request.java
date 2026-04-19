@@ -26,4 +26,8 @@ public class Request {
 	
 	//fields for encapsulate_field
 	String field_name;
+	
+	//fields for pull_push
+	String direction;
+	String member_name;
 }
