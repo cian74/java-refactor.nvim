@@ -1,10 +1,9 @@
 local Menu = require("nui.menu")
-local Popup = require("nui.popup")
 local config = require("refactor.config")
 
 local M = {}
 
-local settings_popup = nil
+local settings_menu = nil
 
 local actions_list = {
 	{ key = "menu", label = "Open Refactor Menu" },
@@ -12,6 +11,7 @@ local actions_list = {
 	{ key = "generate_to_string", label = "Generate toString" },
 	{ key = "extract_method", label = "Extract Method" },
 	{ key = "extract_variable", label = "Extract Variable" },
+	{ key = "extract_interface", label = "Extract Interface" },
 	{ key = "inline_method", label = "Inline Method" },
 	{ key = "encapsulate_field", label = "Encapsulate Field" },
 	{ key = "rename", label = "Rename" },
@@ -27,19 +27,28 @@ local function format_keybinding(key)
 end
 
 function M.show_settings()
-	if settings_popup then
+	if settings_menu then
 		pcall(function()
-			if settings_popup:is_mounted() then
-				settings_popup:unmount()
+			if settings_menu:is_mounted() then
+				settings_menu:unmount()
 			end
 		end)
 	end
 
-	settings_popup = Popup({
+	local function make_lines()
+		local lines = {}
+		for i, action in ipairs(actions_list) do
+			local key = config.get_keybinding(action.key)
+			table.insert(lines, Menu.item(("%d. %s"):format(i, action.label)))
+		end
+		return lines
+	end
+
+	settings_menu = Menu({
 		position = "50%",
 		size = {
 			width = 50,
-			height = 16,
+			height = 17,
 		},
 		border = {
 			style = "rounded",
@@ -51,46 +60,33 @@ function M.show_settings()
 		win_options = {
 			winhighlight = "Normal:Normal,FloatBorder:Normal",
 		},
+	}, {
+		lines = make_lines(),
+		keymap = {
+			focus_next = { "j", "<Down>", "<Tab>" },
+			focus_prev = { "k", "<Up>", "<S-Tab>" },
+			close = { "<Esc>", "q", "<C-c>" },
+			submit = { "<CR>" },
+		},
+		on_close = function()
+			settings_menu = nil
+		end,
+		on_submit = function(item)
+			local idx = tonumber(item.text:match("^%d+"))
+			if idx and actions_list[idx] then
+				M.prompt_for_keybinding(actions_list[idx].key, actions_list[idx].label)
+			end
+		end,
 	})
 
-	settings_popup:mount()
-
-	local lines = {
-		"  Configure Keybindings",
-		"",
-	}
-
-	for i, action in ipairs(actions_list) do
-		local key = config.get_keybinding(action.key)
-		lines[#lines + 1] = ("  %d. %-30s %s"):format(i, action.label, format_keybinding(key))
-	end
-
-	lines[#lines + 1] = ""
-	lines[#lines + 1] = "  Press number key to change that keybinding"
-	lines[#lines + 1] = "  Press q or Esc to close"
-
-	vim.api.nvim_buf_set_lines(settings_popup.bufnr, 0, -1, false, lines)
-	vim.bo[settings_popup.bufnr].modifiable = false
-
-	settings_popup:map("n", "q", function()
-		M.close_settings()
-	end)
-
-	settings_popup:map("n", "<Esc>", function()
-		M.close_settings()
-	end)
-
-	for i, action in ipairs(actions_list) do
-		settings_popup:map("n", tostring(i), function()
-			M.prompt_for_keybinding(action.key, action.label)
-		end)
-	end
-
-	vim.api.nvim_set_current_win(settings_popup.winid)
+	settings_menu:mount()
 end
 
 function M.prompt_for_keybinding(action_key, action_label)
-	M.close_settings()
+	if settings_menu then
+		settings_menu:unmount()
+		settings_menu = nil
+	end
 
 	local prompt = ("New keybinding for %s (current: %s): "):format(
 		action_label,
@@ -108,7 +104,6 @@ function M.prompt_for_keybinding(action_key, action_label)
 		new_key = new_key:gsub("^%s+", ""):gsub("%s+$", "")
 		
 		if new_key:sub(1, 1) == "<" then
-			-- Key already starts with <, keep it as-is
 		else
 			new_key = "<" .. new_key .. ">"
 		end
@@ -120,17 +115,6 @@ function M.prompt_for_keybinding(action_key, action_label)
 			("Keybinding changed: %s -> %s"):format(action_label, format_keybinding(new_key)),
 			vim.log.levels.INFO
 		)
-	end
-end
-
-function M.close_settings()
-	if settings_popup then
-		pcall(function()
-			if settings_popup:is_mounted() then
-				settings_popup:unmount()
-			end
-		end)
-		settings_popup = nil
 	end
 end
 

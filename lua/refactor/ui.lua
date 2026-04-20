@@ -107,7 +107,7 @@ function M.show_help()
 		border = {
 			style = "rounded",
 			text = {
-				top = "  📖 Keybindings  ",
+				top = "  Keybindings  ",
 				top_align = "center",
 			},
 		},
@@ -129,16 +129,16 @@ function M.show_help()
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
 		"  Refactoring Actions:",
 		"",
-		"  Generate Getters/Setters  " .. format_key(config.get_keybinding("generate_getters_setters")),
-		"  Generate toString         " .. format_key(config.get_keybinding("generate_to_string")),
+		"  Generate Getters/Setters " .. format_key(config.get_keybinding("generate_getters_setters")),
+		"  Generate toString        " .. format_key(config.get_keybinding("generate_to_string")),
 		"  Extract Method           " .. format_key(config.get_keybinding("extract_method")),
 		"  Extract Variable         " .. format_key(config.get_keybinding("extract_variable")),
-		"  Extract Interface       " .. format_key(config.get_keybinding("extract_interface")),
+		"  Extract Interface        " .. format_key(config.get_keybinding("extract_interface")),
 		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
 		"  Encapsulate Field        " .. format_key(config.get_keybinding("encapsulate_field")),
 		"  Rename                   " .. format_key(config.get_keybinding("rename")),
-		"  Pull Up                   " .. format_key(config.get_keybinding("pull_up")),
-		"  Push Down                 " .. format_key(config.get_keybinding("push_down")),
+		"  Pull Up                  " .. format_key(config.get_keybinding("pull_up")),
+		"  Push Down                " .. format_key(config.get_keybinding("push_down")),
 		"  Flame Graph              " .. format_key(config.get_keybinding("flame_graph")),
 		"  Menu                     " .. format_key(config.get_keybinding("menu")),
 		"",
@@ -149,11 +149,11 @@ function M.show_help()
 
 	popup:map("n", "q", function()
 		popup:unmount()
-	end)
+	end, { nowait = true })
 
 	popup:map("n", "<Esc>", function()
 		popup:unmount()
-	end)
+	end, { nowait = true })
 end
 
 local flame_split = nil
