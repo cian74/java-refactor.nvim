@@ -1,6 +1,6 @@
 package com.cian.refactor;
 
-public class Tester implements IMyInterfaces {
+public class Tester implements IMainInterface {
 
     String namer = "Bob";
 

@@ -8,6 +8,7 @@ com/cian/refactor/Response.class
 com/cian/refactor/Request.class
 com/cian/refactor/strategy/ExtractMethodStrategy.class
 com/cian/refactor/strategy/ExtractVariableStrategy.class
+com/cian/refactor/IMainInterface.class
 com/cian/refactor/profiler/Profiler.class
 com/cian/refactor/strategy/PullPushStrategy.class
 com/cian/refactor/strategy/GenerateGettersSetters.class
@@ -16,7 +17,6 @@ com/cian/refactor/strategy/GenerateFieldGettersSettersStrategy.class
 com/cian/refactor/strategy/ExtractInterfaceStrategy.class
 com/cian/refactor/Tester.class
 com/cian/refactor/strategy/RenameStrategy.class
-com/cian/refactor/IMyInterface.class
 com/cian/refactor/Pull$Child.class
 com/cian/refactor/strategy/EncapsulateFieldStrategy.class
 com/cian/refactor/Pull$Parent.class

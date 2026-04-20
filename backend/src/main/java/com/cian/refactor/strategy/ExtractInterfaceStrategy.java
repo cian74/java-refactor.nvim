@@ -64,6 +64,8 @@ public class ExtractInterfaceStrategy extends AbstractRefactoringStrategy {
             
             String className = cls.getNameAsString();
             
+            var packageDeclaration = cu.getPackageDeclaration().orElse(null);
+            
             List<MethodDeclaration> methodsToExtract = new ArrayList<>();
             for (String methodName : methodNames) {
                 MethodDeclaration method = findMethodByName(cls, methodName);
@@ -74,6 +76,9 @@ public class ExtractInterfaceStrategy extends AbstractRefactoringStrategy {
             }
             
             CompilationUnit interfaceCu = StaticJavaParser.parse("public interface " + interfaceName + " {}");
+            if (packageDeclaration != null) {
+                interfaceCu.setPackageDeclaration(packageDeclaration.getName().asString());
+            }
             ClassOrInterfaceDeclaration newInterface = interfaceCu.findFirst(ClassOrInterfaceDeclaration.class).get();
             
             for (MethodDeclaration method : methodsToExtract) {
