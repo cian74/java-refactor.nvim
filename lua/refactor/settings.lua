@@ -15,7 +15,8 @@ local actions_list = {
 	{ key = "inline_method", label = "Inline Method" },
 	{ key = "encapsulate_field", label = "Encapsulate Field" },
 	{ key = "rename", label = "Rename" },
-	{ key = "pull_push", label = "Pull/Push" },
+	{ key = "pull_up", label = "Pull Up" },
+	{ key = "push_down", label = "Push Down" },
 	{ key = "flame_graph", label = "Flame Graph" },
 	{ key = "settings", label = "Open Settings" },
 }
