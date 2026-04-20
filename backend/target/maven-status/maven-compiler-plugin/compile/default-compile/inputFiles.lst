@@ -4,6 +4,7 @@
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/GenerateFieldGettersSettersStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/ExtractMethodStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/Runner.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/ExtractInterfaceStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/InlineMethodStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/GenerateToStringStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/Tester.java
@@ -14,6 +15,7 @@
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/EncapsulateFieldStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/profiler/Profiler.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/ExtractVariableStrategy.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/IMyInterface.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/PullPushStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/Refactored.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/AbstractRefactoringStrategy.java

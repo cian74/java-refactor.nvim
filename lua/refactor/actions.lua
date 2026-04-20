@@ -286,6 +286,43 @@ function M.extract_variable()
 	})
 end
 
+function M.extract_interface()
+	if not is_java_file() then return end
+	
+	local buf = vim.api.nvim_get_current_buf()
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	local source = table.concat(lines, "\n")
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:interface_name = input("Enter interface name: ", "I")')
+	vim.cmd('call inputrestore()')
+	local interface_name = vim.g.interface_name
+	vim.g.interface_name = nil
+	
+	if not interface_name or interface_name == "" then
+		vim.notify("No interface name provided", vim.log.levels.WARN)
+		return
+	end
+	
+	vim.cmd('call inputsave()')
+	vim.cmd('let g:method_names = input("Method names to extract (comma or space separated): ")')
+	vim.cmd('call inputrestore()')
+	local method_names = vim.g.method_names
+	vim.g.method_names = nil
+	
+	if not method_names or method_names == "" then
+		vim.notify("No method names provided", vim.log.levels.WARN)
+		return
+	end
+	
+	backend.send_request({
+		command = "extract_interface",
+		source = source,
+		interface_name = interface_name,
+		method_names = method_names,
+	})
+end
+
 function M.flame_graph()
 	if not is_java_file() then return end
 	

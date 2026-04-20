@@ -6,4 +6,6 @@ public class Refactored {
     public String error;
     public java.util.List<String> fields;
     public String flame_graph;
+    public String new_interface_source;
+    public String new_interface_name;
 }

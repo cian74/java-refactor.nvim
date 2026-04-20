@@ -55,6 +55,11 @@ function M.setup_keymaps()
 		actions.extract_method()
 	end, { desc = "Extract Method" })
 
+	vim.keymap.set("n", config.get_keybinding("extract_interface"), function()
+		local actions = require("refactor.actions")
+		actions.extract_interface()
+	end, { desc = "Extract Interface" })
+
 	vim.keymap.set("n", config.get_keybinding("flame_graph"), function()
 		local actions = require("refactor.actions")
 		actions.flame_graph()

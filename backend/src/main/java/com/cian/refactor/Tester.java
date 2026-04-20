@@ -1,6 +1,6 @@
 package com.cian.refactor;
 
-public class Tester {
+public class Tester implements IMyInterfaces {
 
     String namer = "Bob";
 

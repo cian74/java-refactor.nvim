@@ -60,20 +60,29 @@ if json_msg.fields then
 
 				if json_msg.error and not json_msg.new_source then
 					local error_msg = tostring(json_msg.error or "Unknown error")
-					vim.notify("Refactoring error: " + error_msg, vim.log.levels.ERROR)
+					vim.notify("Refactoring error: " .. error_msg, vim.log.levels.ERROR)
 					return
 				end
 				
-				if json_msg.new_source then
+if json_msg.new_source then
 					local lines = vim.split(json_msg.new_source, "\n")
 					if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
 						vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
 					end
-					if json_msg.error then
-						vim.notify(json_msg.error, vim.log.levels.INFO)
+				end
+				
+				if json_msg.new_interface_source and json_msg.new_interface_name then
+					local interface_path = vim.fn.expand("%:p:h") .. "/" .. json_msg.new_interface_name .. ".java"
+					local file = io.open(interface_path, "w")
+					if file then
+						file:write(json_msg.new_interface_source)
+						file:close()
+						vim.notify("Created interface file: " .. interface_path, vim.log.levels.INFO)
+					else
+						vim.notify("Failed to create interface file: " .. interface_path, vim.log.levels.ERROR)
 					end
 				end
-
+				
 				if json_msg.flame_graph then
 					local ui = require("refactor.ui")
 					ui.show_flame_graph(json_msg.flame_graph)

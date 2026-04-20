@@ -26,7 +26,7 @@ function M.show_menu()
 		position = "50%",
 		size = {
 			width = 40,
-			height = 8,
+			height = 9,
 		},
 		border = {
 			style = "rounded",
@@ -42,8 +42,11 @@ function M.show_menu()
 		lines = {
 			Menu.item("Generate Getters and Setters"),
 			Menu.item("Generate toString"),
+			Menu.separator(),
 			Menu.item("Extract Method"),
 			Menu.item("Extract Variable"),
+			Menu.item("Extract Interface"),
+			Menu.separator(),
 			Menu.item("Inline Method"),
 			Menu.item("Encapsulate Field"),
 			Menu.item("Rename"),
@@ -73,6 +76,8 @@ function M.show_menu()
 				actions.inline_method()
 			elseif item.text == "Extract Variable" then
 				actions.extract_variable()
+			elseif item.text == "Extract Interface" then
+				actions.extract_interface()
 			elseif item.text == "Encapsulate Field" then
 				actions.encapsulate_field()
 			elseif item.text == "Rename" then
@@ -128,6 +133,7 @@ function M.show_help()
 		"  Generate toString         " .. format_key(config.get_keybinding("generate_to_string")),
 		"  Extract Method           " .. format_key(config.get_keybinding("extract_method")),
 		"  Extract Variable         " .. format_key(config.get_keybinding("extract_variable")),
+		"  Extract Interface       " .. format_key(config.get_keybinding("extract_interface")),
 		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
 		"  Encapsulate Field        " .. format_key(config.get_keybinding("encapsulate_field")),
 		"  Rename                   " .. format_key(config.get_keybinding("rename")),

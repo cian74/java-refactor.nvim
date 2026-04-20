@@ -30,4 +30,8 @@ public class Request {
 	//fields for pull_push
 	String direction;
 	String member_name;
+	
+	//fields for extract_interface
+	String interface_name;
+	String method_names;
 }

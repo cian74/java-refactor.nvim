@@ -83,7 +83,7 @@ public class RefactoringEngine {
                 );
                 break;
                 
-            case "pull_push":
+case "pull_push":
                 result = strategy.apply(
                     request.source,
                     request.direction,
@@ -91,8 +91,16 @@ public class RefactoringEngine {
                     request.start_line
                 );
                 break;
+            
+            case "extract_interface":
+                result = strategy.apply(
+                    request.source,
+                    request.interface_name,
+                    request.method_names
+                );
+                break;
                 
-            case "generate_getters_setters":
+                case "generate_getters_setters":
             case "list_fields":
             case "generate_toString":
             default:
