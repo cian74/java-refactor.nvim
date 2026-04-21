@@ -65,9 +65,26 @@ if json_msg.fields then
 				end
 				
 if json_msg.new_source then
-					local lines = vim.split(json_msg.new_source, "\n")
-					if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
-						vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
+					if json_msg.needs_confirmation then
+						local line_count = json_msg.new_source_lines or 0
+						vim.cmd('call inputsave()')
+						vim.cmd('let g:confirm_apply = input("Apply ' .. line_count .. ' lines of changes? (y/n): ")')
+						vim.cmd('call inputrestore()')
+						local confirm = vim.g.confirm_apply or ""
+						vim.g.confirm_apply = nil
+						
+						if confirm:lower() == "y" then
+							if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
+								vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, vim.split(json_msg.new_source, "\n"))
+							end
+							vim.notify("Refactoring applied", vim.log.levels.INFO)
+						else
+							vim.notify("Refactoring cancelled", vim.log.levels.WARN)
+						end
+					else
+						if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
+							vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, vim.split(json_msg.new_source, "\n"))
+						end
 					end
 				end
 				
@@ -95,13 +112,6 @@ if json_msg.new_source then
 						vim.notify(error_msg, vim.log.levels.INFO)
 					else
 						vim.notify("Refactoring error: " .. error_msg, vim.log.levels.ERROR)
-					end
-				end
-				
-				if json_msg.new_source then
-					local lines = vim.split(json_msg.new_source, "\n")
-					if M.target_buffer and vim.api.nvim_buf_is_valid(M.target_buffer) then
-						vim.api.nvim_buf_set_lines(M.target_buffer, 0, -1, false, lines)
 					end
 				end
 			end)

@@ -108,6 +108,12 @@ case "pull_push":
                 break;
         }
         
+        if (result.new_source != null) {
+            int lineCount = result.new_source.split("\n").length;
+            result.new_source_lines = lineCount;
+            result.needs_confirmation = lineCount > 100;
+        }
+        
         return gson.toJson(result);
     }
     

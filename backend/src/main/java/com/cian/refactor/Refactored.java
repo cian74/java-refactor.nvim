@@ -8,4 +8,6 @@ public class Refactored {
     public String flame_graph;
     public String new_interface_source;
     public String new_interface_name;
+    public boolean needs_confirmation;
+    public int new_source_lines;
 }

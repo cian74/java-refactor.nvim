@@ -1,8 +1,6 @@
 TODO:
 
 Remaining refactoring features.
-    -Extract interface
-    -push / pull methods or fields between parent and child classes.
 
 add manual for usage to github README.
     -video for each>?
@@ -16,13 +14,11 @@ idea similar to 99 search
 
 exception flow visualiser 
 
-
 flame graph
    - allow the user to create a flame graph for their program in nvim.
    - use existing implementation or build new one
 
 opencode refactor 
-add all other refactor features
 
 accept changes for big refactors
 

@@ -103,10 +103,15 @@ public class ExtractInterfaceStrategy extends AbstractRefactoringStrategy {
             
             cls.addImplementedType(interfaceName);
             
+            String newSource = cu.toString();
+            int newSourceLines = newSource.split("\n").length;
+            
             Refactored result = new Refactored();
-            result.new_source = cu.toString();
+            result.new_source = newSource;
             result.new_interface_source = interfaceCu.toString();
             result.new_interface_name = interfaceName;
+            result.new_source_lines = newSourceLines;
+            result.needs_confirmation = newSourceLines > 100;
             
             return result;
             
