@@ -11,6 +11,7 @@ com/cian/refactor/strategy/ExtractVariableStrategy.class
 com/cian/refactor/IMainInterface.class
 com/cian/refactor/profiler/Profiler.class
 com/cian/refactor/strategy/PullPushStrategy.class
+Accept.class
 com/cian/refactor/strategy/GenerateGettersSetters.class
 com/cian/refactor/strategy/InlineMethodStrategy.class
 com/cian/refactor/strategy/GenerateFieldGettersSettersStrategy.class

@@ -9,20 +9,14 @@ add manual for usage to github README.
 
 add shortcut copy and paste for each refactor bind on README
 
-idea similar to 99 search
-- have an ai search throught the project given the stack trace errors as context, or general runtime errors
-
-exception flow visualiser 
 
 flame graph
    - allow the user to create a flame graph for their program in nvim.
    - use existing implementation or build new one
-
-opencode refactor 
-
-accept changes for big refactors
-
 program flow chart
 
+
+Update readme.
+screen recording of each refactor options speed compared to eclipse / intellij equivalent.
 
 

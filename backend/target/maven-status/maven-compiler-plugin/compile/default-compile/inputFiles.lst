@@ -3,6 +3,7 @@
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/RefactoringStrategyFactory.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/GenerateFieldGettersSettersStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/ExtractMethodStrategy.java
+/Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/Accept.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/Runner.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/ExtractInterfaceStrategy.java
 /Users/cianbarrett/Projects/java-refactor.nvim/backend/src/main/java/com/cian/refactor/strategy/InlineMethodStrategy.java

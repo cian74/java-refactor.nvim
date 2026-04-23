@@ -12,6 +12,7 @@ local actions_list = {
 	{ key = "extract_method", label = "Extract Method" },
 	{ key = "extract_variable", label = "Extract Variable" },
 	{ key = "extract_interface", label = "Extract Interface" },
+	{ key = "ai_find_usages", label = "AI Find Usages" },
 	{ key = "inline_method", label = "Inline Method" },
 	{ key = "encapsulate_field", label = "Encapsulate Field" },
 	{ key = "rename", label = "Rename" },

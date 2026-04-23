@@ -26,7 +26,7 @@ function M.show_menu()
 		position = "50%",
 		size = {
 			width = 40,
-			height = 9,
+			height = 10,
 		},
 		border = {
 			style = "rounded",
@@ -46,6 +46,7 @@ function M.show_menu()
 			Menu.item("Extract Method"),
 			Menu.item("Extract Variable"),
 			Menu.item("Extract Interface"),
+			Menu.item("AI Find Usages"),
 			Menu.separator(),
 			Menu.item("Inline Method"),
 			Menu.item("Encapsulate Field"),
@@ -78,6 +79,8 @@ function M.show_menu()
 				actions.extract_variable()
 			elseif item.text == "Extract Interface" then
 				actions.extract_interface()
+			elseif item.text == "AI Find Usages" then
+				require("refactor.ai_find_usages").ai_find_usages()
 			elseif item.text == "Encapsulate Field" then
 				actions.encapsulate_field()
 			elseif item.text == "Rename" then
@@ -134,6 +137,7 @@ function M.show_help()
 		"  Extract Method           " .. format_key(config.get_keybinding("extract_method")),
 		"  Extract Variable         " .. format_key(config.get_keybinding("extract_variable")),
 		"  Extract Interface        " .. format_key(config.get_keybinding("extract_interface")),
+		"  AI Find Usages         " .. format_key(config.get_keybinding("ai_find_usages")),
 		"  Inline Method            " .. format_key(config.get_keybinding("inline_method")),
 		"  Encapsulate Field        " .. format_key(config.get_keybinding("encapsulate_field")),
 		"  Rename                   " .. format_key(config.get_keybinding("rename")),

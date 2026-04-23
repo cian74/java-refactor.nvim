@@ -60,6 +60,11 @@ function M.setup_keymaps()
 		actions.extract_interface()
 	end, { desc = "Extract Interface" })
 
+	vim.keymap.set("n", config.get_keybinding("ai_find_usages"), function()
+		local ai_find_usages = require("refactor.ai_find_usages")
+		ai_find_usages.ai_find_usages()
+	end, { desc = "AI Find Usages" })
+
 	vim.keymap.set("n", config.get_keybinding("flame_graph"), function()
 		local actions = require("refactor.actions")
 		actions.flame_graph()

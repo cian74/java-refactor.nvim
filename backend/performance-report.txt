@@ -1,20 +1,20 @@
 ================================================================================
-Run: 2026-04-21 15:10:53
+Run: 2026-04-23 18:22:23
 ================================================================================
-Inline Method                            |        5 ms | Inlined simple method (212→204 chars)
-Inline Method (Multiple Calls)           |        2 ms | Inlined method with 3 calls (260→254 chars)
-Generate Selected Getters/Setters        |        3 ms | 4 selected fields → 8 methods (128→792 chars)
-Generate Partial Getters/Setters         |        2 ms | 2 selected fields → 4 methods (128→504 chars)
-Generate toString (Small)                |        1 ms | 3 fields (98→391 chars)
-Generate toString (Large)                |       13 ms | 50 fields (1417→4437 chars)
-Generate toString (Duplicate)            |        2 ms | Detected existing toString
-List Fields                              |        2 ms | Parsed 50 fields (1416→550 chars), 25000.0 fields/sec
-Benchmark Summary (avg of 10)            |        0 ms | Getters: 3ms | ListFields: 0ms | toString: 1ms
-Benchmark (100 iterations)               |        1 ms | avg: 1ms, min: 1ms, max: 5ms
-Memory Usage (Large Operation)           |      240 ms | 500 fields, 14416→98824 chars, 0.0 MB memory
-Extract Method (Expression)              |        2 ms | Extracted 5 chars (175→347 chars total)
+Inline Method                            |        4 ms | Inlined simple method (212→204 chars)
+Inline Method (Multiple Calls)           |        1 ms | Inlined method with 3 calls (260→254 chars)
+Generate Selected Getters/Setters        |        2 ms | 4 selected fields → 8 methods (128→792 chars)
+Generate Partial Getters/Setters         |        1 ms | 2 selected fields → 4 methods (128→504 chars)
+Generate toString (Small)                |        0 ms | 3 fields (98→391 chars)
+Generate toString (Large)                |        9 ms | 50 fields (1417→4437 chars)
+Generate toString (Duplicate)            |        1 ms | Detected existing toString
+List Fields                              |        1 ms | Parsed 50 fields (1416→550 chars), 50000.0 fields/sec
+Benchmark Summary (avg of 10)            |        0 ms | Getters: 2ms | ListFields: 0ms | toString: 1ms
+Benchmark (100 iterations)               |        1 ms | avg: 1ms, min: 0ms, max: 3ms
+Memory Usage (Large Operation)           |      147 ms | 500 fields, 14416→98824 chars, 0.0 MB memory
+Extract Method (Expression)              |        1 ms | Extracted 5 chars (175→347 chars total)
 Extract Method (Statement)               |        0 ms | Extracted 25 chars (164→322 chars total)
-Generate Getters/Setters (Large)         |       30 ms | 100 fields (2817→19225 chars), 6666.7 ops/sec
+Generate Getters/Setters (Large)         |       19 ms | 100 fields (2817→19225 chars), 10526.3 ops/sec
 Generate Getters/Setters (Small)         |        1 ms | 3 fields → 6 methods, 6000.0 ops/sec
-Extract Variable                         |        6 ms | Extracted expression (167→286 chars)
+Extract Variable                         |        4 ms | Extracted expression (167→286 chars)
 
