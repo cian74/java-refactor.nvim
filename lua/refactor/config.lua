@@ -16,7 +16,6 @@ M.defaults = {
 		rename = "<leader>rn",
 		pull_up = "<leader>pu",
 		push_down = "<leader>pd",
-		flame_graph = "<leader>pf",
 		ai_find_usages = "<leader>af",
 		settings = "<leader>jr",
 	},
@@ -36,7 +35,6 @@ M.refactoring_labels = {
 	rename = "Rename",
 	pull_up = "Pull Up",
 	push_down = "Push Down",
-	flame_graph = "Flame Graph",
 	ai_find_usages = "AI Find Usages",
 	settings = "Open Settings",
 }

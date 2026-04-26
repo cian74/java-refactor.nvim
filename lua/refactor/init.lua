@@ -65,11 +65,6 @@ function M.setup_keymaps()
 		ai_find_usages.ai_find_usages()
 	end, { desc = "AI Find Usages" })
 
-	vim.keymap.set("n", config.get_keybinding("flame_graph"), function()
-		local actions = require("refactor.actions")
-		actions.flame_graph()
-	end, { desc = "Flame Graph" })
-
 	vim.keymap.set("n", config.get_keybinding("rename"), function()
 		local actions = require("refactor.actions")
 		actions.rename()

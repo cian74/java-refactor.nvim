@@ -1,4 +1,8 @@
-# Installation
+# java-refactor.nvim
+
+A Neovim plugin for refactoring Java code.
+
+## Installation
 
 Requires Neovim 0.8+ and Java 11+
 
@@ -47,8 +51,13 @@ require("refactor").setup({
         generate_to_string = "<leader>gt",
         extract_method = "<leader>er",
         extract_variable = "<leader>ev",
+        extract_interface = "<leader>ei",
         inline_method = "<leader>im",
-        flame_graph = "<leader>pf",
+        encapsulate_field = "<leader>ef",
+        rename = "<leader>rn",
+        pull_up = "<leader>pu",
+        push_down = "<leader>pd",
+        ai_find_usages = "<leader>af",
         settings = "<leader>jr",
     },
 })
@@ -63,8 +72,13 @@ require("refactor").setup({
 | Generate toString | `<leader>gt` |
 | Extract Method | `<leader>er` |
 | Extract Variable | `<leader>ev` |
+| Extract Interface | `<leader>ei` |
 | Inline Method | `<leader>im` |
-| Flame Graph | `<leader>pf` |
+| Encapsulate Field | `<leader>ef` |
+| Rename | `<leader>rn` |
+| Pull Up | `<leader>pu` |
+| Push Down | `<leader>pd` |
+| AI Find Usages | `<leader>af` |
 | Settings | `<leader>jr` |
 
 ## Commands
@@ -86,5 +100,10 @@ Press `<leader>jr` to open the settings menu where you can:
 - **Generate toString** - Creates a toString() method for the class
 - **Extract Method** - Extracts selected code into a new method
 - **Extract Variable** - Extracts an expression into a local variable
+- **Extract Interface** - Creates an interface from selected methods
 - **Inline Method** - Inlines a simple method at its call sites
-- **Flame Graph** - Profiles the current Java method
+- **Encapsulate Field** - Converts a field to private with getter/setter
+- **Rename** - Renames a method across the codebase
+- **Pull Up** - Moves a member to superclass
+- **Push Down** - Moves a member to subclass
+- **AI Find Usages** - Uses AI to find method references

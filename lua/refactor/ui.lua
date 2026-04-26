@@ -1,6 +1,5 @@
 local Menu = require("nui.menu")
 local Popup = require("nui.popup")
-local Split = require("nui.split")
 local actions = require("refactor.actions")
 local backend = require("refactor.backend")
 local config = require("refactor.config")
@@ -53,7 +52,6 @@ function M.show_menu()
 			Menu.item("Rename"),
 			Menu.item("Pull Up"),
 			Menu.item("Push Down"),
-			Menu.item("Flame Graph"),
 			Menu.separator(),
 			Menu.item("Settings"),
 		},
@@ -89,8 +87,6 @@ function M.show_menu()
 				actions.pull_up()
 			elseif item.text == "Push Down" then
 				actions.push_down()
-			elseif item.text == "Flame Graph" then
-				actions.flame_graph()
 			elseif item.text == "Settings" then
 				require("refactor.settings").show_settings()
 			end
@@ -143,7 +139,6 @@ function M.show_help()
 		"  Rename                   " .. format_key(config.get_keybinding("rename")),
 		"  Pull Up                  " .. format_key(config.get_keybinding("pull_up")),
 		"  Push Down                " .. format_key(config.get_keybinding("push_down")),
-		"  Flame Graph              " .. format_key(config.get_keybinding("flame_graph")),
 		"  Menu                     " .. format_key(config.get_keybinding("menu")),
 		"",
 		"  Commands: :RefactorHelp :RefactorMenu :RefactorSettings",
@@ -160,50 +155,4 @@ function M.show_help()
 	end, { nowait = true })
 end
 
-local flame_split = nil
-
-function M.show_flame_graph(flame_data)
-	if flame_split and flame_split:is_mounted() then
-		flame_split:unmount()
-	end
-	
-	flame_split = Split({
-		orient = "left",
-		size = 45,
-		border = {
-			style = "rounded",
-			text = {
-				top = " 🔥 Flame Graph ",
-				top_align = "center",
-			},
-		},
-		win_options = {
-			winhighlight = "Normal:Normal,FloatBorder:Normal",
-			wrap = false,
-		},
-	})
-	
-	flame_split:mount()
-	
-	vim.api.nvim_set_current_win(flame_split.winid)
-	
-	local lines = vim.split(flame_data, "\n")
-	vim.api.nvim_buf_set_lines(flame_split.bufnr, 0, -1, false, lines)
-	
-	vim.bo[flame_split.bufnr].modifiable = false
-	vim.bo[flame_split.bufnr].readonly = true
-	vim.bo[flame_split.bufnr].filetype = "diff"
-	
-	flame_split:map("n", "q", function()
-		flame_split:unmount()
-		flame_split = nil
-	end, { nowait = true })
-	
-	flame_split:map("n", "<Esc>", function()
-		flame_split:unmount()
-		flame_split = nil
-	end, { nowait = true })
-end
-
 return M
-

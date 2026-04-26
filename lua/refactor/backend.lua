@@ -52,12 +52,6 @@ if json_msg.fields then
 					return
 				end
 
-				if json_msg.flame_graph then
-					local ui = require("refactor.ui")
-					ui.show_flame_graph(json_msg.flame_graph)
-					return
-				end
-
 				if json_msg.error and not json_msg.new_source then
 					local error_msg = tostring(json_msg.error or "Unknown error")
 					vim.notify("Refactoring error: " .. error_msg, vim.log.levels.ERROR)
@@ -100,12 +94,6 @@ if json_msg.new_source then
 					end
 				end
 				
-				if json_msg.flame_graph then
-					local ui = require("refactor.ui")
-					ui.show_flame_graph(json_msg.flame_graph)
-					return
-				end
-
 				if json_msg.error then
 					local error_msg = tostring(json_msg.error or "Unknown error")
 					if json_msg.new_source then
