@@ -2,6 +2,8 @@
 
 A Neovim plugin for refactoring Java code.
 
+[![Demo](https://img.youtube.com/vi/gxTnFaBpRkM/0.jpg)](https://www.youtube.com/watch?v=gxTnFaBpRkM)
+
 ## Installation
 
 Requires Neovim 0.8+ and Java 11+
